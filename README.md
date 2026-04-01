@@ -6,7 +6,7 @@ AI coding tools build fast. Specs drift faster.
 ## Runtime
 
 SpecFerret targets Node.js 22+ and ships as a plain Node CLI.
-It uses Node's built-in `node:sqlite` backend for the local graph store, so there is no Bun runtime requirement and no separate database setup.
+It uses Node's built-in `node:sqlite` backend for the local graph store, so there is no separate runtime shim or database setup.
 
 ## Install
 
