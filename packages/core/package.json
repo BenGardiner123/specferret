@@ -1,0 +1,40 @@
+{
+  "name": "@specferret/core",
+  "version": "0.1.0",
+  "description": "SpecFerret core engine — spec drift detection.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": ["dist/", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1",
+    "glob": "^13.0.6",
+    "gray-matter": "^4.0.3",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^25.5.0",
+    "typescript": "^6.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BenGardiner123/specferret.git"
+  },
+  "homepage": "https://specferret.dev"
+}

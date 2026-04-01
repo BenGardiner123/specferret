@@ -1,0 +1,139 @@
+import { Command } from "commander";
+import pc from "picocolors";
+import { getStore, Reconciler, findProjectRoot } from "@specferret/core";
+
+export const lintCommand = new Command("lint")
+  .description("Ferret keeps your specs honest.")
+  .option("--changed", "Scan only git-staged files before linting")
+  .option(
+    "--ci",
+    "Machine-readable JSON output, no ANSI codes. Exit 1 on breaking drift.",
+  )
+  .option("--force", "Re-extract all files before linting")
+  .action(async (options) => {
+    const start = performance.now();
+
+    const root = findProjectRoot();
+    const store = await getStore();
+
+    try {
+      await store.init();
+
+      // Run scan first (inline — keeps lint under 50 lines by delegating to scan logic)
+      await runScan(root, options);
+
+      // Reconcile
+      const reconciler = new Reconciler(store);
+      const report = await reconciler.reconcile();
+
+      const contracts = await store.getContracts();
+      const contractCount = contracts.length;
+      const ms = Math.round(performance.now() - start);
+
+      if (options.ci) {
+        // CI mode: JSON to stdout, zero ANSI codes
+        const breaking = report.flagged.filter((f) => f.depth === 1).length;
+        const nonBreaking = report.flagged.filter((f) => f.depth > 1).length;
+        const output = {
+          version: "2.0",
+          consistent: report.consistent,
+          breaking,
+          nonBreaking,
+          flagged: report.flagged,
+          timestamp: report.timestamp,
+        };
+        process.stdout.write(JSON.stringify(output, null, 2) + "\n");
+        process.exit(report.consistent ? 0 : 1);
+        return;
+      }
+
+      if (report.consistent) {
+        // Boris clean state — exactly one line
+        process.stdout.write(
+          pc.green("✓ ferret") +
+            `  ${contractCount} contracts  0 drift  ${ms}ms\n`,
+        );
+        process.exit(0);
+        return;
+      }
+
+      // Drift detected — Boris tree format
+      const flaggedContracts = new Map<string, typeof report.flagged>();
+      for (const item of report.flagged) {
+        const existing = flaggedContracts.get(item.triggeredByContractId) ?? [];
+        existing.push(item);
+        flaggedContracts.set(item.triggeredByContractId, existing);
+      }
+
+      process.stdout.write(
+        `\n  ferret  ${contractCount} contracts need review\n\n`,
+      );
+
+      for (const [contractId, affected] of flaggedContracts) {
+        const contract = contracts.find((c) => c.id === contractId);
+        const isBreaking = contract?.status === "needs-review";
+        const label = isBreaking
+          ? pc.red("BREAKING") + `  ${contractId}`
+          : pc.yellow("NON-BREAKING") + `  ${contractId}`;
+        process.stdout.write(`  ${label}\n`);
+
+        for (let i = 0; i < affected.length; i++) {
+          const item = affected[i];
+          const isLast = i === affected.length - 1;
+          const treeChar = isLast ? "└──" : "├──";
+          const impact =
+            item.impact === "direct"
+              ? "imports this directly"
+              : `imports this transitively (depth ${item.depth})`;
+          process.stdout.write(`  ${treeChar} ${item.filePath}  ${impact}\n`);
+        }
+        process.stdout.write("\n");
+      }
+
+      const breakingCount = report.flagged.filter(
+        (f) => f.impact === "direct",
+      ).length;
+      const transitiveCount = report.flagged.filter(
+        (f) => f.impact === "transitive",
+      ).length;
+      process.stdout.write(
+        `  ${breakingCount} breaking  ${transitiveCount} non-breaking\n`,
+      );
+      process.stdout.write(
+        `\n  ${pc.cyan("→")} Run ferret review to resolve\n\n`,
+      );
+
+      process.exit(1);
+    } catch (err: any) {
+      if (options.ci) {
+        process.stderr.write(JSON.stringify({ error: String(err) }) + "\n");
+      } else {
+        process.stderr.write(`ferret: configuration error — ${err.message}\n`);
+      }
+      process.exit(2);
+    } finally {
+      await store.close();
+    }
+  });
+
+async function runScan(
+  root: string,
+  options: { changed?: boolean; force?: boolean },
+): Promise<void> {
+  // Dynamically import scan to keep lint.ts thin
+  const { scanCommand } = await import("./scan.js");
+  // Parse and run scan with appropriate flags
+  const args = ["scan"];
+  if (options.changed) args.push("--changed");
+  if (options.force) args.push("--force");
+  // Silently suppress scan output for lint's own run
+  const savedWrite = process.stdout.write.bind(process.stdout);
+  process.stdout.write = () => true;
+  try {
+    await scanCommand.parseAsync(args, { from: "user" });
+  } catch {
+    // Scan errors are non-fatal for lint
+  } finally {
+    process.stdout.write = savedWrite;
+  }
+}
