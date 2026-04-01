@@ -12,5 +12,5 @@
     "resolveJsonModule": true,
     "types": ["node"]
   },
-  "include": ["bin/**/*.ts", "bin/**/*.d.ts"]
+  "include": ["bin/**/*.ts", "bin/**/*.d.ts", "vitest.config.ts"]
 }

@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - run: npm install
+
+      - run: npm test
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - run: npm install
+
+      - run: npm run build
+
+      - name: Smoke test compiled CLI
+        run: node packages/cli/dist/bin/ferret.js --version
+
+      - name: Performance gate
+        run: |
+          mkdir -p /tmp/ferret-gate
+          cd /tmp/ferret-gate
+          node $GITHUB_WORKSPACE/packages/cli/dist/bin/ferret.js init --no-hook
+          time node $GITHUB_WORKSPACE/packages/cli/dist/bin/ferret.js lint
+        # ferret lint must complete in under 500ms. If this step takes >1s something is wrong.
