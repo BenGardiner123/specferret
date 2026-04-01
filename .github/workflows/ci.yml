@@ -1,5 +1,8 @@
 name: CI
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   push:
     branches: [main]
@@ -44,5 +47,13 @@ jobs:
           mkdir -p /tmp/ferret-gate
           cd /tmp/ferret-gate
           node $GITHUB_WORKSPACE/packages/cli/dist/bin/ferret.js init --no-hook
-          time node $GITHUB_WORKSPACE/packages/cli/dist/bin/ferret.js lint
-        # ferret lint must complete in under 500ms. If this step takes >1s something is wrong.
+          start=$(node -e 'console.log(Date.now())')
+          output=$(node $GITHUB_WORKSPACE/packages/cli/dist/bin/ferret.js lint)
+          end=$(node -e 'console.log(Date.now())')
+          elapsed=$((end - start))
+          printf '%s\n' "$output"
+          echo "wall-clock: ${elapsed}ms"
+          if [ "$elapsed" -ge 500 ]; then
+            echo "ferret lint exceeded 500ms wall clock gate"
+            exit 1
+          fi
