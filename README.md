@@ -16,6 +16,9 @@ ferret init
 ferret lint
 ```
 
+`ferret init` installs a pre-commit hook by default (when `.git/hooks` exists).
+Use `ferret init --no-hook` to opt out.
+
 Requires Bun 1.0 or later. Install Bun at [bun.sh](https://bun.sh).
 
 ## Your First Spec
@@ -101,6 +104,21 @@ ferret lint --ci
 
 Outputs JSON, exits 1 on drift. Drop it in any pipeline.
 
+CI baseline modes:
+
+- Default: `--ci-baseline committed` (requires committed `.ferret/context.json`)
+- Optional: `--ci-baseline rebuild` (rebuilds baseline state in CI)
+
+Examples:
+
+```bash
+# Recommended when context.json is committed
+ferret lint --ci
+
+# Use in ephemeral CI runners if you do not commit context.json
+ferret lint --ci --ci-baseline rebuild
+```
+
 ```yaml
 # GitHub Actions
 - run: ferret lint --ci
@@ -140,6 +158,26 @@ your-project/
 
 Planning tools define intent. SpecFerret enforces it.
 
+### Code-First Extract (`ferret extract`)
+
+For deterministic, non-LLM contract bootstrap from code, annotate TypeScript declarations:
+
+```ts
+// @ferret-contract: api.GET/users api
+export interface GetUsersResponse {
+  id: string;
+  email: string;
+}
+```
+
+Then run:
+
+```bash
+ferret extract
+```
+
+This scaffolds `.contract.md` files under `contracts/` using deterministic mapping and exits non-zero if any annotated symbol fails extraction.
+
 ### Agent Skills
 
 To automate the bridge — having your AI agent read planning docs and scaffold the `.contract.md` files for you — copy the agent skill template for your tool:
@@ -150,6 +188,43 @@ To automate the bridge — having your AI agent read planning docs and scaffold 
 | GitHub Copilot | [docs/agent-skills/ferret-extract.prompt.md](docs/agent-skills/ferret-extract.prompt.md)                 | `.github/prompts/ferret-extract.prompt.md` |
 
 Once installed, invoke it (`/ferret-extract` in Claude Code, or via Copilot agent mode) and point it at your planning docs. It will create the contract files and run `ferret lint`.
+
+## GA Validation Proof (spec-kit + BMAD)
+
+SpecFerret GA is blocked unless validation passes in two external workflow repos:
+
+1. A spec-kit validation repository
+2. A BMAD validation repository
+
+Validation policy and gates:
+
+- `spec/GA-VALIDATION-REPOS.MD`
+
+Execution runbook (copy-paste commands, CI sequence, evidence checklist):
+
+- `spec/GA-VALIDATION-RUNBOOK.MD`
+
+Template bootstrap:
+
+```bash
+bun run bootstrap:validation --type spec-kit --out ../specferret-validation-spec-kit
+bun run bootstrap:validation --type bmad --out ../specferret-validation-bmad
+```
+
+## Documentation Map
+
+Primary documentation index:
+
+- `spec/DOCUMENTATION-INDEX.MD`
+
+Critical docs for release quality:
+
+- `spec/ROADMAP.MD` (gates, blockers, execution sequence)
+- `spec/GA-VALIDATION-REPOS.MD` (policy)
+- `spec/GA-VALIDATION-RUNBOOK.MD` (execution)
+- `spec/SPRINT-2-STORIES.MD` and `spec/SPRINT-3-STORIES.MD` (implementation backlog)
+
+Documentation is part of done. Workflow changes are not complete until docs are updated in the same PR.
 
 ---
 

@@ -1,20 +1,46 @@
 import { Command } from "commander";
+import * as fs from "node:fs";
+import * as path from "node:path";
 import pc from "picocolors";
 import { getStore, Reconciler, findProjectRoot } from "@specferret/core";
 
 export const lintCommand = new Command("lint")
-  .description("Ferret keeps your specs honest.")
+  .description("Default daily command: check and block contract drift.")
   .option("--changed", "Scan only git-staged files before linting")
   .option(
     "--ci",
     "Machine-readable JSON output, no ANSI codes. Exit 1 on breaking drift.",
+  )
+  .option(
+    "--ci-baseline <mode>",
+    "CI baseline strategy: committed (default) or rebuild",
+    "committed",
   )
   .option("--force", "Re-extract all files before linting")
   .action(async (options) => {
     const start = performance.now();
 
     const root = findProjectRoot();
+    const contextPath = path.join(root, ".ferret", "context.json");
     const store = await getStore();
+
+    if (options.ci) {
+      const baselineMode = String(options.ciBaseline ?? "committed");
+      if (baselineMode !== "committed" && baselineMode !== "rebuild") {
+        process.stderr.write(
+          "ferret: invalid --ci-baseline value. Use 'committed' or 'rebuild'.\n",
+        );
+        process.exit(2);
+      }
+
+      if (baselineMode === "committed" && !fs.existsSync(contextPath)) {
+        process.stderr.write(
+          "ferret: CI baseline missing (.ferret/context.json). " +
+            "Commit context.json or run with --ci-baseline rebuild.\n",
+        );
+        process.exit(2);
+      }
+    }
 
     try {
       await store.init();

@@ -1,7 +1,6 @@
 import { Command } from "commander";
 import * as fs from "node:fs";
 import * as path from "node:path";
-import * as readline from "node:readline";
 import { SqliteStore } from "@specferret/core";
 
 const EXAMPLE_SPEC = `---
@@ -59,7 +58,7 @@ ferret lint --changed
 
 export const initCommand = new Command("init")
   .description("Initialise SpecFerret in the current project.")
-  .option("--no-hook", "Skip pre-commit hook installation prompt")
+  .option("--no-hook", "Skip pre-commit hook installation")
   .action(async (options) => {
     const root = process.cwd();
     const ferretDir = path.join(root, ".ferret");
@@ -110,42 +109,40 @@ export const initCommand = new Command("init")
     process.stdout.write("  CLAUDE.md            created\n");
     process.stdout.write("  ferret.config.json   created\n");
 
-    // 6. Pre-commit hook — opt-in prompt only
+    // 6. Pre-commit hook — installed by default, explicit opt-out via --no-hook
     if (options.hook !== false) {
-      const shouldInstall = await promptHook();
-      if (shouldInstall) {
-        installHook(root);
+      const hookResult = installHook(root);
+      if (hookResult === "installed") {
         process.stdout.write("  .git/hooks/pre-commit installed\n");
+      } else if (hookResult === "exists") {
+        process.stdout.write(
+          "  .git/hooks/pre-commit skipped (already exists)\n",
+        );
+      } else {
+        process.stdout.write(
+          "  .git/hooks/pre-commit skipped (.git/hooks unavailable)\n",
+        );
       }
     }
 
-    process.stdout.write("\nRun: ferret scan\n");
+    process.stdout.write("\nRun: ferret lint\n");
   });
 
-function installHook(root: string): void {
+type HookInstallResult = "installed" | "exists" | "unavailable";
+
+function installHook(root: string): HookInstallResult {
   const gitHooksDir = path.join(root, ".git", "hooks");
-  if (!fs.existsSync(gitHooksDir)) return;
+  if (!fs.existsSync(gitHooksDir)) return "unavailable";
 
   const hookPath = path.join(gitHooksDir, "pre-commit");
+  if (fs.existsSync(hookPath)) {
+    return "exists";
+  }
+
   fs.writeFileSync(hookPath, PRE_COMMIT_HOOK, {
     mode: 0o755,
     encoding: "utf-8",
   });
-}
 
-function promptHook(): Promise<boolean> {
-  return new Promise((resolve) => {
-    if (!process.stdin.isTTY) {
-      resolve(false);
-      return;
-    }
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-    });
-    rl.question("Install pre-commit hook? (y/N) ", (answer) => {
-      rl.close();
-      resolve(answer.trim().toLowerCase() === "y");
-    });
-  });
+  return "installed";
 }

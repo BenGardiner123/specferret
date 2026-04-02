@@ -16,7 +16,9 @@ import { randomUUID } from "node:crypto";
 import pc from "picocolors";
 
 export const scanCommand = new Command("scan")
-  .description("Scan spec files and update the contract graph.")
+  .description(
+    "Advanced/manual: scan contract files and update the graph state.",
+  )
   .argument("[files...]", "Specific files to scan (optional)")
   .option("--changed", "Scan only git-staged files")
   .option("--force", "Re-extract all files regardless of hash")

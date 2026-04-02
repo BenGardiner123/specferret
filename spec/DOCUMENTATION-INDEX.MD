@@ -1,0 +1,48 @@
+# DOCUMENTATION-INDEX.MD
+
+Single entry point for SpecFerret planning and GA validation documentation.
+
+---
+
+## Core Product Docs
+
+- `README.md` — install, daily workflow, BMAD/spec-kit integration, GA validation pointers
+- `spec/CONTRACT-SCHEMA.MD` — contract frontmatter and JSON Schema subset
+- `spec/SPEC-CONVENTIONS.MD` — contract tree conventions and workflow integration
+- `spec/MASTER-ARCHITECTURE.MD` — architecture rules and layer boundaries
+- `spec/MASTER-IMPLEMENTATION-PLAN.MD` — implementation sequence and standards
+- `spec/MASTER-STORIES.MD` — story-level acceptance criteria
+
+---
+
+## Planning and Delivery Docs
+
+- `spec/ROADMAP.MD` — sprint roadmap, GA gates, execution breakdown
+- `spec/SPRINT-1-STORIES.MD` — completed sprint stories and acceptance criteria
+- `spec/SPRINT-2-STORIES.MD` — planned stories for G1-G3
+- `spec/SPRINT-3-STORIES.MD` — planned stories for G4-G5
+
+---
+
+## GA Validation Docs
+
+- `spec/GA-VALIDATION-REPOS.MD` — hard GA policy for external proof repos
+- `spec/GA-VALIDATION-RUNBOOK.MD` — step-by-step execution and evidence capture
+- `spec/validation-repo-templates/spec-kit/` — spec-kit validation template and CI workflow
+- `spec/validation-repo-templates/bmad/` — BMAD validation template and CI workflow
+
+---
+
+## Documentation Rules (Non-Optional)
+
+1. Any change to workflow behavior must update `README.md` in the same PR.
+2. Any change to GA gates or acceptance logic must update `spec/ROADMAP.MD`.
+3. Any change to validation mechanics must update both:
+   - `spec/GA-VALIDATION-REPOS.MD`
+   - `spec/GA-VALIDATION-RUNBOOK.MD`
+4. Any sprint story marked complete must include corresponding doc updates in its PR description.
+5. No story is done until docs and tests are both updated.
+
+---
+
+_© Laser Unicorn — MIT License_

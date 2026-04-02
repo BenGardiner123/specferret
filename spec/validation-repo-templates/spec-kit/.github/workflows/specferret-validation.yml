@@ -1,0 +1,51 @@
+name: SpecFerret Validation (spec-kit)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  baseline-pass:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install SpecFerret
+        run: bun install -g @specferret/cli
+      - name: Prepare baseline
+        run: ferret init --no-hook; ferret lint
+      - name: Validate no drift
+        run: ferret lint --ci
+
+  seeded-fail:
+    runs-on: ubuntu-latest
+    needs: baseline-pass
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install SpecFerret
+        run: bun install -g @specferret/cli
+      - name: Seed breaking drift
+        run: chmod +x scripts/seed-breaking-drift.sh; ./scripts/seed-breaking-drift.sh
+      - name: Expect CI failure on drift
+        run: |
+          set +e
+          ferret lint --ci
+          code=$?
+          set -e
+          if [ "$code" -eq 0 ]; then
+            echo "Expected non-zero exit for breaking drift"
+            exit 1
+          fi
+
+  resolution-pass:
+    runs-on: ubuntu-latest
+    needs: seeded-fail
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - name: Install SpecFerret
+        run: bun install -g @specferret/cli
+      - name: Resolve drift
+        run: chmod +x scripts/resolve-drift.sh; ./scripts/resolve-drift.sh
+      - name: Validate resolved state
+        run: ferret lint --ci

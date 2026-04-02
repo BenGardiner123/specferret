@@ -108,7 +108,7 @@ describe("ferret init — S01 acceptance criteria", () => {
     );
   });
 
-  it("--no-hook skips the pre-commit prompt and still exits 0", () => {
+  it("--no-hook skips pre-commit hook installation and still exits 0", () => {
     const result = runInit(tmpDir, ["--no-hook"]);
     assert.equal(result.status, 0);
   });

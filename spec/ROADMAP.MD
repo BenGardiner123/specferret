@@ -346,6 +346,88 @@ Do not build these in Sprint 1.
 
 ---
 
+## GA Release Gate — Blockers
+
+SpecFerret does not ship GA until every gate below is complete and verified.
+Validation repository execution details live in `spec/GA-VALIDATION-REPOS.MD`.
+
+| Gate | Requirement                               | Acceptance Criteria                                                                                                                                                                |
+| ---- | ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| G1   | Zero-manual enforcement setup             | `ferret init` installs commit enforcement by default (opt-out only). Fresh repo: contract-breaking change is blocked on first commit with no extra setup commands.                 |
+| G2   | Lint-first daily UX                       | Public docs and CLI help position `ferret lint` as the default developer command. `ferret scan` is documented as advanced/manual only.                                             |
+| G3   | CI baseline correctness                   | `ferret lint --ci` cannot false-pass due to missing local state. CI path is deterministic via explicit baseline strategy (committed context or rebuild mode) and documented setup. |
+| G4   | Seamless contract bootstrap               | First-party `ferret extract` supports deterministic contract scaffolding from annotated TypeScript shapes. Team can bootstrap first 3 real contracts in under 10 minutes.          |
+| G5   | Dependency graph reliability              | Missing/invalid imports are surfaced before merge via lint checks and clear diagnostics. Contract graph gaps are visible to developers before commit.                              |
+| G6   | Guided drift resolution                   | `ferret review` provides a guided resolution flow (accept/update/reject path), not just manual file editing instructions.                                                          |
+| G7   | External workflow proof (spec-kit + BMAD) | Two dedicated validation repositories (one spec-kit, one BMAD) run the same GA smoke flow and pass in CI. No GA without both green.                                                |
+
+### GA Verification Checklist
+
+1. New repository setup completed by a developer with no SpecFerret experience in under 30 minutes.
+2. First breaking drift is blocked at commit with no additional tooling setup beyond `ferret init`.
+3. CI fails on real drift and passes on no-drift across two clean runners.
+4. Two-person trial (feature author + reviewer) resolves a drift event using `ferret review` with no external help.
+5. End-to-end smoke path is documented and repeatable: `ferret init` -> create contract -> `ferret lint` -> breaking change -> blocked commit -> resolution -> green CI.
+6. Spec-kit validation repository passes the GA smoke flow and publishes CI artifacts.
+7. BMAD validation repository passes the GA smoke flow and publishes CI artifacts.
+8. Validation repos are rerun against the candidate GA tag before release announcement.
+
+### Release Decision Rule
+
+If any gate G1-G7 is not met, release remains pre-GA.
+
+---
+
+## GA Execution Breakdown (S25+)
+
+This is the implementation plan for G1-G7. Stories are ordered by dependency.
+
+### Sprint 2.5 — Enforcement + DX Baseline
+
+| Story | Gate | Scope                                                                                     | Deliverable                                     | Acceptance Test                                                                           |
+| ----- | ---- | ----------------------------------------------------------------------------------------- | ----------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| S25   | G1   | `ferret init` installs commit hook by default, opt-out flag (`--no-hook`) still supported | New init behavior + tests                       | Fresh repo: `ferret init` -> breaking contract edit -> commit blocked without extra setup |
+| S26   | G2   | CLI messaging and docs become lint-first (`scan` labeled advanced/manual)                 | Updated help text + docs pass                   | New user follows README without using `scan` and catches drift with `lint` only           |
+| S27   | G3   | CI baseline mode (explicit strategy) with deterministic behavior                          | `--ci` baseline policy implemented + documented | Two clean CI runners produce identical pass/fail results on same commit                   |
+
+### Sprint 3 — Bootstrap + Graph Reliability
+
+| Story | Gate | Scope                                                                                        | Deliverable                            | Acceptance Test                                                                                   |
+| ----- | ---- | -------------------------------------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| S28   | G4   | `ferret extract` deterministic extraction from annotated TypeScript (`@ferret-contract`)     | Working CLI command + fixture suite    | Repo with 3 annotated shapes -> 3 valid `.contract.md` files generated in <10 min workflow        |
+| S29   | G4   | Contract file generation quality guardrails (stable IDs, path mapping, schema normalization) | Extraction validation + error messages | Invalid annotations fail with actionable diagnostics; valid annotations generate canonical output |
+| S30   | G5   | Import integrity lint checks (missing, self-import, unresolved, circular)                    | Lint diagnostics + exit behavior       | Broken import graph fails `ferret lint` pre-commit and in CI with precise file/ID references      |
+| S31   | G5   | Import suggestion assist (non-blocking hints from known graph neighbors)                     | Warning hints in lint output           | Developer sees suggested import IDs when dependency appears likely but undeclared                 |
+
+### Sprint 4 — Resolution UX + GA Hardening
+
+| Story | Gate  | Scope                                                                                | Deliverable                                       | Acceptance Test                                                         |
+| ----- | ----- | ------------------------------------------------------------------------------------ | ------------------------------------------------- | ----------------------------------------------------------------------- |
+| S32   | G6    | Guided `ferret review` flow (accept/update/reject)                                   | Interactive review command                        | Two-person trial resolves a drift event without opening docs            |
+| S33   | G6    | Non-interactive review mode for CI/dev scripts                                       | `ferret review --json` and structured output      | Tooling can consume resolution options programmatically                 |
+| S34   | G1-G6 | End-to-end GA smoke harness (`init` -> lint -> break -> block -> review -> green CI) | Automated smoke test workflow                     | Smoke pipeline passes on main and fails on intentional drift seed       |
+| S35   | G1-G6 | Docs and onboarding hardening (single 30-min quickstart path)                        | Consolidated quickstart + troubleshooting         | New developer completes setup + first blocked drift in under 30 minutes |
+| S36   | G7    | Build spec-kit validation repository and CI harness                                  | Public/paired test repo + workflow + evidence log | Spec-kit repo green on full smoke flow and drift-block scenario         |
+| S37   | G7    | Build BMAD validation repository and CI harness                                      | Public/paired test repo + workflow + evidence log | BMAD repo green on full smoke flow and drift-block scenario             |
+
+### Ownership and Sequencing Notes
+
+1. S25-S27 are blockers for external beta.
+2. S28-S31 are blockers for "seamless with spec-driven workflows" positioning.
+3. S32-S35 are blockers for GA announcement readiness.
+4. S36-S37 are hard blockers for GA launch approval.
+5. `ferret watch` (S12) can run in parallel but does not replace any GA gate.
+
+### Definition of Done for GA Program
+
+1. All stories S25-S37 merged with passing tests.
+2. GA Verification Checklist passes in CI and in one manual dry run.
+3. Changelog calls out migration notes for hook defaults and CI baseline strategy.
+4. README, CLI `--help`, and onboarding docs are mutually consistent.
+5. Validation evidence from spec-kit and BMAD repos is linked in release notes.
+
+---
+
 ## V3 — Sebastian's Vision
 
 Built on the JSON Schema foundation from Sprint 1.

@@ -117,13 +117,13 @@ are automatically included — no extra configuration needed.
 
 ### File Names
 
-| Rule                    | Example                                                                      |
-| ----------------------- | ---------------------------------------------------------------------------- |
-| Lowercase only          | `jwt.contract.md` not `JWT.contract.md`                                      |
-| Hyphens for multi-word  | `user-profile.contract.md` not `user_profile.contract.md`                    |
-| Match the contract name | `id: auth.jwt` → file: `auth/jwt.contract.md` or `jwt.contract.md`          |
-| No spaces               | `rate-limits.contract.md` not `rate limits.contract.md`                      |
-| `.contract.md` extension| Always — this is what SpecFerret scans for                                   |
+| Rule                     | Example                                                            |
+| ------------------------ | ------------------------------------------------------------------ |
+| Lowercase only           | `jwt.contract.md` not `JWT.contract.md`                            |
+| Hyphens for multi-word   | `user-profile.contract.md` not `user_profile.contract.md`          |
+| Match the contract name  | `id: auth.jwt` → file: `auth/jwt.contract.md` or `jwt.contract.md` |
+| No spaces                | `rate-limits.contract.md` not `rate limits.contract.md`            |
+| `.contract.md` extension | Always — this is what SpecFerret scans for                         |
 
 File names do not need to match contract IDs exactly, but a predictable mapping
 makes the project navigable. The recommended convention:
@@ -230,7 +230,7 @@ as long as it is not inside `specDir`.
 1. **Plan**: Use BMAD or spec-kit to produce a PRD, architecture doc, or story
 2. **Extract contracts**: Identify the data shapes in the planning doc
 3. **Create spec files**: Write `.contract.md` files in `contracts/` with `ferret:` frontmatter
-4. **Scan**: Run `ferret scan` to register contracts in the graph
+4. **Lint**: Run `ferret lint` to register and validate contracts in the graph
 5. **Build**: Implement the feature
 6. **Guard**: `ferret lint` runs on commit — catches drift before it ships
 
@@ -336,17 +336,17 @@ free-form prose that SpecFerret never reads.
 
 ## Summary — The Opinions
 
-| Topic                     | SpecFerret's position                                            |
-| ------------------------- | ---------------------------------------------------------------- |
-| Contract tree location    | `contracts/` — completely separate from planning docs            |
-| File extension            | `.contract.md` — SpecFerret scans only these files               |
-| Folder structure          | Domain-first, never sprint-first                                 |
-| Nesting depth             | 1 level recommended, 2 max                                      |
-| File naming               | Lowercase, hyphens, `.contract.md` extension                     |
-| One contract per file     | Yes, always                                                      |
-| Planning doc separation   | Keep planning docs outside `specDir`                             |
-| Flat vs nested            | Flat is fine under ~15 files                                     |
-| BMAD/spec-kit integration | Parallel directories, manual bridge, SpecFerret downstream       |
+| Topic                     | SpecFerret's position                                      |
+| ------------------------- | ---------------------------------------------------------- |
+| Contract tree location    | `contracts/` — completely separate from planning docs      |
+| File extension            | `.contract.md` — SpecFerret scans only these files         |
+| Folder structure          | Domain-first, never sprint-first                           |
+| Nesting depth             | 1 level recommended, 2 max                                 |
+| File naming               | Lowercase, hyphens, `.contract.md` extension               |
+| One contract per file     | Yes, always                                                |
+| Planning doc separation   | Keep planning docs outside `specDir`                       |
+| Flat vs nested            | Flat is fine under ~15 files                               |
+| BMAD/spec-kit integration | Parallel directories, manual bridge, SpecFerret downstream |
 
 ---
 

@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "test": "bun test",
-    "build": "bun run --filter '*' build"
+    "build": "bun run --filter '*' build",
+    "bootstrap:validation": "bun scripts/bootstrap-validation-repo.ts"
   }
 }

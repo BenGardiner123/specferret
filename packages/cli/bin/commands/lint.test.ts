@@ -22,8 +22,9 @@ describe("ferret lint — S07 acceptance criteria", () => {
 
   beforeEach(() => {
     tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), "ferret-lint-test-"));
-    // Lint requires an initialised project
+    // Lint tests use committed baseline mode, so create context.json once.
     runFerret(tmpDir, ["init", "--no-hook"]);
+    runFerret(tmpDir, ["scan"]);
   });
 
   afterEach(() => {
