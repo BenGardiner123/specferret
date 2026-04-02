@@ -11,7 +11,10 @@ import {
 const CONTRACT_ID_PATTERN = /^[A-Za-z0-9_.\/-]+$/;
 
 function normalizeFileName(input: string): string {
-  return input.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return input
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 function mapIdToContractPath(specDir: string, id: string): string {
@@ -130,7 +133,10 @@ export const extractCommand = new Command("extract")
       }
 
       for (const contract of result.contracts) {
-        if (!CONTRACT_ID_PATTERN.test(contract.id) || !contract.id.includes(".")) {
+        if (
+          !CONTRACT_ID_PATTERN.test(contract.id) ||
+          !contract.id.includes(".")
+        ) {
           diagnostics.push(
             `${relFile} (${contract.sourceSymbol}): Invalid contract id '${contract.id}'. ` +
               "Use <namespace>.<name> with only letters, numbers, _, -, /, and .",
@@ -139,7 +145,10 @@ export const extractCommand = new Command("extract")
           continue;
         }
 
-        const relContractPath = mapIdToContractPath(config.specDir, contract.id);
+        const relContractPath = mapIdToContractPath(
+          config.specDir,
+          contract.id,
+        );
         const absContractPath = path.join(root, relContractPath);
 
         const existingMapped = pathToContractId.get(relContractPath);

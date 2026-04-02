@@ -43,8 +43,16 @@ export interface GetUsersResponse {
     const result = runFerret(tmpDir, ["extract"]);
 
     assert.equal(result.status, 0);
-    const outPath = path.join(tmpDir, "contracts", "api", "get-users.contract.md");
-    assert.ok(fs.existsSync(outPath), `expected generated contract at ${outPath}`);
+    const outPath = path.join(
+      tmpDir,
+      "contracts",
+      "api",
+      "get-users.contract.md",
+    );
+    assert.ok(
+      fs.existsSync(outPath),
+      `expected generated contract at ${outPath}`,
+    );
     const content = fs.readFileSync(outPath, "utf-8");
     assert.ok(content.includes("id: api.GET/users"));
     assert.ok(content.includes("type: api"));
@@ -63,7 +71,12 @@ export interface GetUsersResponse {
     const first = runFerret(tmpDir, ["extract"]);
     assert.equal(first.status, 0);
 
-    const outPath = path.join(tmpDir, "contracts", "api", "get-users.contract.md");
+    const outPath = path.join(
+      tmpDir,
+      "contracts",
+      "api",
+      "get-users.contract.md",
+    );
     const before = fs.readFileSync(outPath, "utf-8");
 
     const second = runFerret(tmpDir, ["extract"]);
@@ -123,7 +136,12 @@ export interface Canonical {
     const result = runFerret(tmpDir, ["extract"]);
     assert.equal(result.status, 0);
 
-    const outPath = path.join(tmpDir, "contracts", "api", "get-canonical.contract.md");
+    const outPath = path.join(
+      tmpDir,
+      "contracts",
+      "api",
+      "get-canonical.contract.md",
+    );
     const content = fs.readFileSync(outPath, "utf-8");
     assert.match(content, /required:\s*[\s\S]*- alpha[\s\S]*- zeta/);
   });

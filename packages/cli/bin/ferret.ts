@@ -16,14 +16,17 @@ async function main(): Promise<void> {
     .description("SpecFerret keeps your specs honest.")
     .version(VERSION);
 
-  const [{ initCommand }, { scanCommand }, { lintCommand }, { extractCommand }] = await Promise.all(
-    [
-      import("./commands/init.js"),
-      import("./commands/scan.js"),
-      import("./commands/lint.js"),
-      import("./commands/extract.js"),
-    ],
-  );
+  const [
+    { initCommand },
+    { scanCommand },
+    { lintCommand },
+    { extractCommand },
+  ] = await Promise.all([
+    import("./commands/init.js"),
+    import("./commands/scan.js"),
+    import("./commands/lint.js"),
+    import("./commands/extract.js"),
+  ]);
 
   program.addCommand(initCommand);
   program.addCommand(scanCommand);

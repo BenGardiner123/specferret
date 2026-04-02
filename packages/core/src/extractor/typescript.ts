@@ -1,4 +1,10 @@
-export type ContractType = "api" | "table" | "type" | "event" | "flow" | "config";
+export type ContractType =
+  | "api"
+  | "table"
+  | "type"
+  | "event"
+  | "flow"
+  | "config";
 
 export interface ExtractedCodeContract {
   id: string;
@@ -190,7 +196,8 @@ class TypeParser {
 }
 
 function parseAnnotations(content: string): Annotation[] {
-  const pattern = /^\s*\/\/\s*@ferret-contract:\s*([^\s]+)\s+(api|table|type|event|flow|config)\s*$/gm;
+  const pattern =
+    /^\s*\/\/\s*@ferret-contract:\s*([^\s]+)\s+(api|table|type|event|flow|config)\s*$/gm;
   const out: Annotation[] = [];
   let match: RegExpExecArray | null;
 
@@ -205,15 +212,17 @@ function parseAnnotations(content: string): Annotation[] {
   return out;
 }
 
-function extractDeclaration(content: string, start: number): {
+function extractDeclaration(
+  content: string,
+  start: number,
+): {
   symbol: string;
   objectBody: string;
   error?: string;
 } {
   const tail = content.slice(start);
-  const decl = /(?:export\s+)?(interface|type)\s+([A-Za-z0-9_]+)\s*(?:=)?\s*/m.exec(
-    tail,
-  );
+  const decl =
+    /(?:export\s+)?(interface|type)\s+([A-Za-z0-9_]+)\s*(?:=)?\s*/m.exec(tail);
 
   if (!decl || decl.index === undefined) {
     return {

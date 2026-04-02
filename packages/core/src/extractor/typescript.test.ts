@@ -42,7 +42,9 @@ export interface ProfileResponse {
 
     assert.equal(result.contracts.length, 1);
     assert.ok(
-      result.diagnostics.some((d) => d.includes("Union types are not supported")),
+      result.diagnostics.some((d) =>
+        d.includes("Union types are not supported"),
+      ),
     );
   });
 
@@ -52,7 +54,9 @@ export interface ProfileResponse {
 
     assert.equal(result.contracts.length, 0);
     assert.ok(
-      result.diagnostics.some((d) => d.includes("No interface/type declaration found")),
+      result.diagnostics.some((d) =>
+        d.includes("No interface/type declaration found"),
+      ),
     );
   });
 });

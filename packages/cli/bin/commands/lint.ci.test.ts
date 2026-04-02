@@ -39,7 +39,12 @@ describe("ferret lint --ci baseline strategy — S27 acceptance criteria", () =>
   });
 
   it("passes with --ci-baseline rebuild on a clean project", () => {
-    const result = runFerret(tmpDir, ["lint", "--ci", "--ci-baseline", "rebuild"]);
+    const result = runFerret(tmpDir, [
+      "lint",
+      "--ci",
+      "--ci-baseline",
+      "rebuild",
+    ]);
 
     assert.equal(result.status, 0);
     const json = JSON.parse(result.stdout) as Record<string, unknown>;
@@ -70,7 +75,10 @@ describe("ferret lint --ci baseline strategy — S27 acceptance criteria", () =>
     assert.equal(firstJson.consistent, secondJson.consistent);
     assert.equal(firstJson.breaking, secondJson.breaking);
     assert.equal(firstJson.nonBreaking, secondJson.nonBreaking);
-    assert.equal(JSON.stringify(firstJson.flagged), JSON.stringify(secondJson.flagged));
+    assert.equal(
+      JSON.stringify(firstJson.flagged),
+      JSON.stringify(secondJson.flagged),
+    );
   });
 
   it("fails fast on invalid --ci-baseline value", () => {
