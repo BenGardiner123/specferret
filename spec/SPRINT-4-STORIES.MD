@@ -6,7 +6,7 @@ This sprint targets G6 and the final GA hardening tranche.
 
 ---
 
-## Status: In Progress
+## Status: ✓ Complete
 
 Goal: turn lint failures into guided, model-friendly resolution workflows.
 Gate target: G6.
@@ -90,6 +90,28 @@ Gate target: G6.
 - `.github/workflows/ci.yml`
 - `package.json`
 - `README.md`
+
+---
+
+### S35 — Docs and onboarding hardening
+
+**As a** new developer evaluating SpecFerret,
+**I want** a single onboarding path plus troubleshooting,
+**so that** I can get from install to first blocked drift and resolution without hunting across multiple docs.
+
+**Acceptance Criteria:**
+
+- One doc provides the shortest setup-to-resolution path
+- Quickstart covers install, first clean lint, first blocked drift, and first resolution
+- Troubleshooting covers baseline, hook, integrity, and CI mismatch failures
+- README and documentation index point to the same onboarding path
+
+**Status:** ✓ Complete
+**Implemented Files:**
+
+- `docs/QUICKSTART.md`
+- `README.md`
+- `spec/DOCUMENTATION-INDEX.MD`
 
 ---
 

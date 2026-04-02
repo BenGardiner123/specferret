@@ -21,6 +21,12 @@ Use `ferret init --no-hook` to opt out.
 
 Requires Bun 1.0 or later. Install Bun at [bun.sh](https://bun.sh).
 
+If you want the shortest end-to-end onboarding path, start with:
+
+- [docs/QUICKSTART.md](docs/QUICKSTART.md)
+
+That guide covers install, first clean lint, first blocked drift, first `ferret review`, and common failure recovery in one path.
+
 ## Your First Spec
 
 After `ferret init`, open `contracts/example.contract.md` and replace it with your first real contract:
@@ -56,7 +62,7 @@ ferret lint
 You should see:
 
 ```
-✓ ferret  1 contract  0 drift  12ms
+✓ ferret  1 contracts  0 drift  12ms
 ```
 
 Now change `required: [id, email]` to `required: [id]` and run lint again:
@@ -66,8 +72,10 @@ ferret lint
 ```
 
 ```
-BREAKING api.GET/users — required field(s) removed: email
+ferret  1 contracts need review
 ```
+
+and guidance to run `ferret review`.
 
 That's spec drift. SpecFerret caught it before your AI assistant, your teammates, or your users did.
 
@@ -257,6 +265,7 @@ bun run bootstrap:validation --type bmad --out ../specferret-validation-bmad
 Primary documentation index:
 
 - `spec/DOCUMENTATION-INDEX.MD`
+- `docs/QUICKSTART.md` (single onboarding path + troubleshooting)
 
 Critical docs for release quality:
 

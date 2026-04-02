@@ -7,6 +7,7 @@ Single entry point for SpecFerret planning and GA validation documentation.
 ## Core Product Docs
 
 - `README.md` — install, daily workflow, BMAD/spec-kit integration, GA validation pointers
+- `docs/QUICKSTART.md` — single onboarding path, first drift block, troubleshooting
 - `spec/CONTRACT-SCHEMA.MD` — contract frontmatter and JSON Schema subset
 - `spec/SPEC-CONVENTIONS.MD` — contract tree conventions and workflow integration
 - `spec/MASTER-ARCHITECTURE.MD` — architecture rules and layer boundaries
@@ -21,6 +22,7 @@ Single entry point for SpecFerret planning and GA validation documentation.
 - `spec/SPRINT-1-STORIES.MD` — completed sprint stories and acceptance criteria
 - `spec/SPRINT-2-STORIES.MD` — planned stories for G1-G3
 - `spec/SPRINT-3-STORIES.MD` — planned stories for G4-G5
+- `spec/SPRINT-4-STORIES.MD` — resolution UX and GA hardening stories
 
 ---
 
