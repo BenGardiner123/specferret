@@ -260,6 +260,30 @@ bun run bootstrap:validation --type spec-kit --out ../specferret-validation-spec
 bun run bootstrap:validation --type bmad --out ../specferret-validation-bmad
 ```
 
+Current candidate evidence (2026-04-03):
+
+- spec-kit validation run (success): https://github.com/BenGardiner123/spec-ferret-validation-spec-kit/actions/runs/23926425357
+- spec-kit commit SHA: `c6413cd1fa29e7a483c7a0ceaeded81f7e0771a2`
+- BMAD validation run (success): https://github.com/BenGardiner123/specferret-validation-bmad/actions/runs/23926426128
+- BMAD commit SHA: `b1039e0182188a9879d0ae596c88864c87833ae8`
+
+Note on candidate install path:
+
+- These validations ran before npm publication of `@specferret/cli`.
+- CI used a pinned repo-local bundle (`vendor/ferret.bundle.js`) to run the exact tested candidate.
+- After npm publication, switch validation workflows back to `bun install -g @specferret/cli@<candidate-version>`.
+
+## Migration Notes (Pre-GA -> Current)
+
+Behavior changes teams must adopt:
+
+1. `ferret init` now installs a pre-commit hook by default (opt-out with `--no-hook`).
+2. CI baseline behavior is now explicit:
+  - default is `ferret lint --ci --ci-baseline committed` (requires committed `.ferret/context.json`)
+  - alternative is `ferret lint --ci --ci-baseline rebuild` for ephemeral runners.
+
+If your existing CI intermittently passed/fails around baseline state, migrate to one baseline strategy per repository and document it in your pipeline README.
+
 ## Documentation Map
 
 Primary documentation index:

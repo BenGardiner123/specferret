@@ -361,6 +361,13 @@ Validation repository execution details live in `spec/GA-VALIDATION-REPOS.MD`.
 | G6   | Guided drift resolution                   | `ferret review` provides a guided resolution flow (accept/update/reject path), not just manual file editing instructions.                                                          |
 | G7   | External workflow proof (spec-kit + BMAD) | Two dedicated validation repositories (one spec-kit, one BMAD) run the same GA smoke flow and pass in CI. No GA without both green.                                                |
 
+### Current Gate Status (2026-04-03)
+
+- G7 is currently **met** for the tested candidate.
+- spec-kit evidence: https://github.com/BenGardiner123/spec-ferret-validation-spec-kit/actions/runs/23926425357
+- BMAD evidence: https://github.com/BenGardiner123/specferret-validation-bmad/actions/runs/23926426128
+- Candidate execution note: validation used pinned repo-local bundle (`vendor/ferret.bundle.js`) because `@specferret/cli` was not yet published to npm at execution time.
+
 ### GA Verification Checklist
 
 1. New repository setup completed by a developer with no SpecFerret experience in under 30 minutes.
