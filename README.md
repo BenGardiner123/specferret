@@ -148,19 +148,29 @@ This creates `.ferret/` state, `ferret.config.json`, and installs a pre-commit h
 > [!TIP]
 > Use `ferret init --no-hook` to skip the pre-commit hook.
 
-**3. Scan contracts**
+**3. Bootstrap contracts (choose one path)**
+
+Manual contract-first path:
 
 ```bash
-ferret scan
+mkdir -p contracts
 ```
 
-Parses every `.contract.md` file under `contracts/` and writes the dependency graph to `.ferret/context.json`.
+Code-first TypeScript path:
 
-**4. Lint**
+```bash
+ferret extract
+```
+
+`ferret extract` reads `@ferret-contract` annotations and scaffolds deterministic `.contract.md` files.
+
+**4. Lint (default daily command)**
 
 ```bash
 ferret lint
 ```
+
+`ferret lint` runs scan/reconcile checks and reports drift. Use `ferret scan` directly for advanced/manual graph refresh workflows.
 
 Clean output:
 
@@ -296,7 +306,6 @@ This scaffolds `.contract.md` files under `contracts/` using deterministic mappi
 | `ferret review`         | Resolve blocking drift interactively                      |
 | `ferret review --json`  | Emit review context as JSON (for tooling and agents)      |
 | `ferret extract`        | Generate contracts from annotated TypeScript declarations |
-| `ferret status`         | Show graph summary and store health                       |
 
 <details>
 <summary><b>Pre-commit hook behaviour</b></summary>

@@ -17,7 +17,6 @@ bun install -g @specferret/cli
 
 ```bash
 ferret init
-ferret scan
 ferret lint
 ```
 
@@ -33,9 +32,8 @@ ferret review
 ferret init
 ferret scan
 ferret lint
+ferret extract
 ferret review
-ferret status
-ferret reconcile
 ```
 
 ## CI usage
