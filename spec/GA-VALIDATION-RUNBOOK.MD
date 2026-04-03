@@ -242,10 +242,12 @@ Fix:
 
 Cause:
 
-- candidate has not been published to npm yet
+- candidate has not been published to npm yet, or npm auth/scope permissions are invalid for `@specferret`
 
 Fix:
 
+- verify auth first: `npm whoami`
+- if scope publish/install access is missing, restore `@specferret` org/team permissions and retry
 - for local dry runs, invoke the compiled artifact directly:
   - `bun ../specferret/packages/cli/dist/bin/ferret.js ...`
 - for CI proof, publish the candidate or document an equivalent install mechanism before collecting final GA evidence

@@ -366,7 +366,7 @@ Validation repository execution details live in `spec/GA-VALIDATION-REPOS.MD`.
 - G7 is currently **met** for the tested candidate.
 - spec-kit evidence: https://github.com/BenGardiner123/spec-ferret-validation-spec-kit/actions/runs/23962649755
 - BMAD evidence: https://github.com/BenGardiner123/specferret-validation-bmad/actions/runs/23962652352
-- Candidate execution note: validation used pinned repo-local bundle (`vendor/ferret.bundle.js`) because `@specferret/cli` was not yet published to npm at execution time.
+- Candidate execution note: validation used pinned repo-local bundle (`vendor/ferret.bundle.js`) during matrix execution; release artifacts are now published as `@specferret/cli@0.1.2` and `@specferret/core@0.1.2`.
 
 ### GA Verification Checklist
 
