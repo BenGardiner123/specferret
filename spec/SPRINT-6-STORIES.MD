@@ -6,14 +6,14 @@ This sprint targets G8 from ROADMAP.MD.
 
 ---
 
-## Status: Planned
+## Status: In progress
 
 Goal: make CI adoption one-line and deterministic through a reusable GitHub Action.
 Gate target: G8.
 
 ---
 
-### S46 — Reusable GitHub Action (`specferret/action@v1`)
+### S46 — Reusable GitHub Action (`BenGardiner123/action@v1`)
 
 **As a** repository maintainer,
 **I want** a reusable GitHub Action for `ferret lint --ci`,
@@ -27,7 +27,7 @@ Gate target: G8.
 - Action exits non-zero on drift exactly as CLI does
 - Action docs include minimal copy-paste workflow
 
-**Status:** Planned
+**Status:** In progress
 
 ---
 
@@ -44,7 +44,7 @@ Gate target: G8.
 - JSON artifact is preserved for every run
 - Output contract is documented for tooling/agent consumption
 
-**Status:** Planned
+**Status:** In progress
 
 ---
 
@@ -61,7 +61,7 @@ Gate target: G8.
 - Templates are validated by test repositories or fixture workflows
 - Docs include exact copy-paste examples
 
-**Status:** Planned
+**Status:** In progress
 
 ---
 
@@ -78,14 +78,14 @@ Gate target: G8.
 - Release checklist includes Action smoke validation before publish
 - Action docs state supported runtimes and deprecation policy
 
-**Status:** Planned
+**Status:** In progress
 
 ---
 
 ### Sprint Exit Criteria
 
 1. Stories S46-S49 are implemented or explicitly deferred with approved rationale.
-2. `uses: specferret/action@v1` works in a fresh repository without custom shell scripts.
+2. `uses: BenGardiner123/action@v1` works in a fresh repository without custom shell scripts.
 3. Action outputs are stable and documented for human and machine consumers.
 4. Starter templates are validated and linked from README/docs.
 5. Documentation updates land in the same PR set:
@@ -127,40 +127,40 @@ Use this ordered list to execute S46-S49 with no ambiguity.
 
 Populate all fields before changing Sprint 6 status to Complete.
 
-- Candidate version/tag: `TODO`
-- Candidate commit SHA: `TODO`
-- Action release tag: `TODO` (expected format: `v1.x.y`)
-- Action major tag alias update (`v1`): `TODO` (yes/no + commit)
-- Action repository URL: `TODO`
-- Action repository commit SHA: `TODO`
+- Candidate version/tag: `0.1.2 (Sprint 6 in progress)`
+- Candidate commit SHA: `45689d40e1bfacebe23a0ce406d08f87cd13d22a`
+- Action release tag: `v1.0.0`
+- Action major tag alias update (`v1`): `yes -> f5ee352674d38092147c166cfb7b745974f94d94`
+- Action repository URL: `https://github.com/BenGardiner123/action`
+- Action repository commit SHA: `f5ee352674d38092147c166cfb7b745974f94d94`
 
 S46 evidence:
 
-- Action metadata file path: `TODO`
-- Smoke workflow run URL (single-package): `TODO`
-- Smoke workflow run URL (monorepo): `TODO`
-- Smoke workflow run URL (PR-only): `TODO`
-- Fixture repository 1 commit SHA: `TODO`
-- Fixture repository 2 commit SHA: `TODO`
+- Action metadata file path: `.github/actions/ferret-lint/action.yml`
+- Smoke workflow run URL (single-package): `PENDING (tracked via .github/workflows/ferret-action-smoke.yml)`
+- Smoke workflow run URL (monorepo): `PENDING (tracked via .github/workflows/ferret-action-smoke.yml)`
+- Smoke workflow run URL (PR-only): `PENDING (tracked via .github/workflows/ferret-action-smoke.yml)`
+- Fixture repository 1 commit SHA: `PENDING`
+- Fixture repository 2 commit SHA: `PENDING`
 
 S47 evidence:
 
-- Workflow summary screenshot/artifact link: `TODO`
-- JSON artifact example link: `TODO`
-- Output schema doc link: `TODO`
+- Workflow summary screenshot/artifact link: `PENDING`
+- JSON artifact example link: `docs/ci-templates/ferret-lint-ci-sample.json`
+- Output schema doc link: `docs/ci-templates/specferret-action-output-contract.md`
 
 S48 evidence:
 
-- Starter template (single-package) path/link: `TODO`
-- Starter template (monorepo) path/link: `TODO`
-- Starter template (PR-only) path/link: `TODO`
-- Template validation matrix summary link: `TODO`
+- Starter template (single-package) path/link: `docs/ci-templates/ferret-action-single-package.yml`
+- Starter template (monorepo) path/link: `docs/ci-templates/ferret-action-monorepo.yml`
+- Starter template (PR-only) path/link: `docs/ci-templates/ferret-action-pr-only.yml`
+- Template validation matrix summary link: `.github/workflows/ferret-action-smoke.yml`
 
 S49 evidence:
 
-- Versioning/support policy doc link: `TODO`
-- Breaking-change migration template link: `TODO`
-- Release checklist update link: `TODO`
+- Versioning/support policy doc link: `docs/ci-templates/specferret-action-versioning-policy.md`
+- Breaking-change migration template link: `docs/ci-templates/specferret-action-versioning-policy.md`
+- Release checklist update link: `docs/ci-templates/specferret-action-release-checklist.md`
 
 Final sign-off:
 
