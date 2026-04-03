@@ -279,8 +279,9 @@ Behavior changes teams must adopt:
 
 1. `ferret init` now installs a pre-commit hook by default (opt-out with `--no-hook`).
 2. CI baseline behavior is now explicit:
-  - default is `ferret lint --ci --ci-baseline committed` (requires committed `.ferret/context.json`)
-  - alternative is `ferret lint --ci --ci-baseline rebuild` for ephemeral runners.
+
+- default is `ferret lint --ci --ci-baseline committed` (requires committed `.ferret/context.json`)
+- alternative is `ferret lint --ci --ci-baseline rebuild` for ephemeral runners.
 
 If your existing CI intermittently passed/fails around baseline state, migrate to one baseline strategy per repository and document it in your pipeline README.
 

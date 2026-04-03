@@ -97,7 +97,10 @@ describe("ferret review — S32/S33 acceptance criteria", () => {
     assert.match(result.stdout, /DIRECT IMPACT/);
     assert.match(result.stdout, /TRANSITIVE IMPACT/);
     assert.match(result.stdout, /requested-action: update/);
-    assert.match(result.stdout, /contracts[/\\]search[/\\]results\.contract\.md/);
+    assert.match(
+      result.stdout,
+      /contracts[/\\]search[/\\]results\.contract\.md/,
+    );
     assert.match(result.stdout, /TRANSITIVE IMPACT\s+[\s\S]*none/);
 
     const store = new SqliteStore(path.join(tmpDir, ".ferret", "graph.db"));
