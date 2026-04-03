@@ -517,7 +517,7 @@ PRs welcome. The codebase is intentionally small and readable.
 - [ ] **Tree-sitter extraction** — TypeScript shape extraction without annotations (Phase 5)
 - [ ] **Multi-language support** — Go, Python, OpenAPI (post Phase 5)
 - [ ] **Hosted dashboard** — team-wide contract health, analytics, SSO/RBAC
-- [ ] **Branch-matrix dogfooding (Sprint 5)** — scenario branches across spec-kit and BMAD validation repos
+- [x] **Branch-matrix dogfooding (Sprint 5)** — scenario branches across spec-kit and BMAD validation repos
 
 See [spec/ROADMAP.MD](spec/ROADMAP.MD) for the full plan.
 
@@ -525,7 +525,14 @@ See [spec/ROADMAP.MD](spec/ROADMAP.MD) for the full plan.
 
 ## ✅ Validation Evidence
 
-Released 2026-04-03:
+Latest validated evidence (post explicit S40/S41/S42 assertions):
+
+| Validation          | Link                                                                                                                   |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| spec-kit matrix run | [actions/runs/23962649755](https://github.com/BenGardiner123/spec-ferret-validation-spec-kit/actions/runs/23962649755) |
+| BMAD matrix run     | [actions/runs/23962652352](https://github.com/BenGardiner123/specferret-validation-bmad/actions/runs/23962652352)      |
+
+Release evidence (v0.1.1 publish window):
 
 | Validation                      | Link                                                                                                                   |
 | ------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |

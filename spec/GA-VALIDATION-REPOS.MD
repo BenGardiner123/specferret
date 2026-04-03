@@ -148,21 +148,22 @@ For every GA candidate tag:
 
 ## Executed Evidence (2026-04-03)
 
-The following candidate validation runs are complete and green:
+The following candidate validation runs are complete and green.
+This execution includes explicit S40 depth assertions, S41 proof-artifact assertions, and S42 extract determinism assertions.
 
 ### spec-kit
 
 - Repository: `BenGardiner123/spec-ferret-validation-spec-kit`
 - Workflow run (success):
-  https://github.com/BenGardiner123/spec-ferret-validation-spec-kit/actions/runs/23926425357
-- Commit SHA tested: `c6413cd1fa29e7a483c7a0ceaeded81f7e0771a2`
+  https://github.com/BenGardiner123/spec-ferret-validation-spec-kit/actions/runs/23962649755
+- Commit SHA tested: `6817ba632156474cd918a5a97be0f7ef3826f48a`
 
 ### BMAD
 
 - Repository: `BenGardiner123/specferret-validation-bmad`
 - Workflow run (success):
-  https://github.com/BenGardiner123/specferret-validation-bmad/actions/runs/23926426128
-- Commit SHA tested: `b1039e0182188a9879d0ae596c88864c87833ae8`
+  https://github.com/BenGardiner123/specferret-validation-bmad/actions/runs/23962652352
+- Commit SHA tested: `bb263c0c617a0a4176954b6cb461ee26e485ae13`
 
 ### Candidate Install Strategy Used
 

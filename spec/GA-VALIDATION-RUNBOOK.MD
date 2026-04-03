@@ -158,6 +158,34 @@ For each repository, capture:
 
 Store links in release notes and GA decision record.
 
+### Recorded Execution Evidence (2026-04-03)
+
+This record captures a completed branch-matrix run for both canonical validation repositories.
+This execution includes explicit S40 depth assertions, S41 proof-artifact assertions, and S42 extract determinism assertions.
+
+Candidate under test:
+
+- vendored CLI bundle in validation repos (`bun vendor/ferret.bundle.js`)
+
+spec-kit validation repo:
+
+- Workflow run: https://github.com/BenGardiner123/spec-ferret-validation-spec-kit/actions/runs/23962649755
+- Head SHA: `6817ba632156474cd918a5a97be0f7ef3826f48a`
+- Result: `success`
+- Matrix jobs: 8/8 successful
+
+BMAD validation repo:
+
+- Workflow run: https://github.com/BenGardiner123/specferret-validation-bmad/actions/runs/23962652352
+- Head SHA: `bb263c0c617a0a4176954b6cb461ee26e485ae13`
+- Result: `success`
+- Matrix jobs: 8/8 successful
+
+Notes:
+
+- This satisfies the matrix-green evidence requirement for the recorded candidate state.
+- For release sign-off, keep evidence links and SHAs aligned to the exact tag/version being announced.
+
 ---
 
 ## Pass/Fail Decision Table

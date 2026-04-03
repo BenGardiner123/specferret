@@ -361,11 +361,11 @@ Validation repository execution details live in `spec/GA-VALIDATION-REPOS.MD`.
 | G6   | Guided drift resolution                   | `ferret review` provides a guided resolution flow (accept/update/reject path), not just manual file editing instructions.                                                          |
 | G7   | External workflow proof (spec-kit + BMAD) | Two dedicated validation repositories (one spec-kit, one BMAD) run the same GA smoke flow and pass in CI. No GA without both green.                                                |
 
-### Current Gate Status (2026-04-03)
+### Current Gate Status (as of 2026-04-04)
 
 - G7 is currently **met** for the tested candidate.
-- spec-kit evidence: https://github.com/BenGardiner123/spec-ferret-validation-spec-kit/actions/runs/23926425357
-- BMAD evidence: https://github.com/BenGardiner123/specferret-validation-bmad/actions/runs/23926426128
+- spec-kit evidence: https://github.com/BenGardiner123/spec-ferret-validation-spec-kit/actions/runs/23962649755
+- BMAD evidence: https://github.com/BenGardiner123/specferret-validation-bmad/actions/runs/23962652352
 - Candidate execution note: validation used pinned repo-local bundle (`vendor/ferret.bundle.js`) because `@specferret/cli` was not yet published to npm at execution time.
 
 ### GA Verification Checklist
@@ -431,6 +431,13 @@ Goal: formalize branch-based scenario coverage across existing validation reposi
 | S43   | G7   | Add opinionated SpecFerret scenario branches for layout, lint-first CI, and enforcement defaults | Scenario/specferret-opinionated-\* branch set              | Opinionated branches prove default workflow policy and guardrail behavior                       |
 | S44   | G7   | Update validation policy and runbook for branch-matrix operation, triage, and evidence capture   | Updated GA validation docs                                 | Maintainer can execute full branch matrix with no interpretation and collect complete artifacts |
 | S45   | G7   | Add release-readiness gate for matrix-green evidence on both repos for the same candidate tag    | Candidate release checklist update                         | Candidate is blocked if any required scenario branch is red in either validation repository     |
+
+Sprint 5 status: Complete.
+
+Evidence (post explicit S40/S41/S42 assertions):
+
+- spec-kit: https://github.com/BenGardiner123/spec-ferret-validation-spec-kit/actions/runs/23962649755
+- BMAD: https://github.com/BenGardiner123/specferret-validation-bmad/actions/runs/23962652352
 
 ### Ownership and Sequencing Notes
 

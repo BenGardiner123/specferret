@@ -6,7 +6,7 @@ This sprint extends G7 from single-flow proof to scenario-matrix proof.
 
 ---
 
-## Status: Planned
+## Status: Complete
 
 Goal: use existing external validation repos (spec-kit + BMAD) to prove SpecFerret behavior across all key drift situations and one opinionated SpecFerret workflow model.
 Gate target: G7 hardening.
@@ -37,7 +37,7 @@ Gate target: G7 hardening.
 - `scenario/code-first-extract`
 - `scenario/specferret-opinionated-layout`
 
-**Status:** Planned
+**Status:** Complete
 
 ---
 
@@ -54,7 +54,7 @@ Gate target: G7 hardening.
 - CI fails when observed output diverges from expected branch contract
 - Assertion matrix is identical between spec-kit and BMAD repos
 
-**Status:** Planned
+**Status:** Complete
 
 ---
 
@@ -71,7 +71,7 @@ Gate target: G7 hardening.
 - Depth in diagnostics is asserted (for example depth 2+ appears when expected)
 - Matrix evidence includes logs proving depth-aware reporting
 
-**Status:** Planned
+**Status:** Complete
 
 ---
 
@@ -89,7 +89,7 @@ Gate target: G7 hardening.
 - `reject` preserves block and records intent without false green state
 - Evidence includes before/after command output and JSON where applicable
 
-**Status:** Planned
+**Status:** Complete
 
 ---
 
@@ -106,7 +106,7 @@ Gate target: G7 hardening.
 - Extracted contract IDs, paths, and normalized schema order remain stable
 - Non-deterministic output is treated as release-blocking regression
 
-**Status:** Planned
+**Status:** Complete
 
 ---
 
@@ -123,7 +123,7 @@ Gate target: G7 hardening.
 - Branch verifies enforcement defaults and opt-out behavior
 - Scenario docs explicitly state this is a recommended posture, not a hard requirement for all teams
 
-**Status:** Planned
+**Status:** Complete
 
 ---
 
@@ -140,7 +140,7 @@ Gate target: G7 hardening.
 - Evidence template includes branch, commit SHA, candidate version, and artifact links
 - Historical baseline evidence remains preserved and clearly labeled
 
-**Status:** Planned
+**Status:** Complete
 
 ---
 
@@ -157,7 +157,7 @@ Gate target: G7 hardening.
 - Release notes include matrix evidence links and candidate version provenance
 - Gate wording is reflected in `spec/ROADMAP.MD`
 
-**Status:** Planned
+**Status:** Complete
 
 ---
 
@@ -200,6 +200,12 @@ Use this list as the execution order for final Sprint 5 sign-off.
 8. Apply S45 gate:
    - candidate is blocked if any required scenario branch is red in either validation repo.
 9. Publish release evidence links in release notes.
+
+### Execution Evidence
+
+- spec-kit matrix run (post S40/S41/S42 assertions): https://github.com/BenGardiner123/spec-ferret-validation-spec-kit/actions/runs/23962649755
+- BMAD matrix run (post S40/S41/S42 assertions): https://github.com/BenGardiner123/specferret-validation-bmad/actions/runs/23962652352
+- Both runs completed successfully with all required matrix scenarios green.
 
 ---
 

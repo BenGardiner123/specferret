@@ -49,6 +49,13 @@ Supports CI baseline modes:
 - `--ci-baseline committed` (default)
 - `--ci-baseline rebuild`
 
+## Validation status
+
+Sprint 5 branch-matrix validation (spec-kit + BMAD) is green with explicit S40/S41/S42 assertions:
+
+- spec-kit: https://github.com/BenGardiner123/spec-ferret-validation-spec-kit/actions/runs/23962649755
+- BMAD: https://github.com/BenGardiner123/specferret-validation-bmad/actions/runs/23962652352
+
 ## Runtime requirements
 
 - Bun 1.0+
