@@ -524,6 +524,8 @@ PRs welcome. The codebase is intentionally small and readable.
 - [ ] **`ferret upgrade`** — SQLite → Postgres migration command
 - [ ] **`ferret place`** — AI-powered feature placement against the graph
 - [ ] **`ferret benchmark`** — provider benchmarking for AI-assisted review
+- [ ] **GitHub Action adoption (Sprint 6)** — one-line CI enforcement via `uses: specferret/action@v1`
+- [ ] **Upward code-to-spec drift (Sprint 7)** — catch implementation drift when specs are not updated
 - [ ] **Tree-sitter extraction** — TypeScript shape extraction without annotations (Phase 5)
 - [ ] **Multi-language support** — Go, Python, OpenAPI (post Phase 5)
 - [ ] **Hosted dashboard** — team-wide contract health, analytics, SSO/RBAC

@@ -349,6 +349,29 @@ This section is an archived planning snapshot. Current implementation status for
 
 ---
 
+## Sprint 6 — Adoption Distribution (Planned)
+
+| Task | Description                                                                 |
+| ---- | --------------------------------------------------------------------------- |
+| S46  | Publish reusable GitHub Action wrapper for `ferret lint --ci`               |
+| S47  | Add Action outputs for PR annotations, summary markdown, and artifact links |
+| S48  | Add copy-paste starter workflows for common repo layouts                    |
+| S49  | Define Action release/version policy (`v1`, breaking-change strategy)       |
+
+---
+
+## Sprint 7 — Upward Code-to-Spec Drift (Planned)
+
+| Task | Description                                                                            |
+| ---- | -------------------------------------------------------------------------------------- |
+| S50  | Build code-shape snapshot extraction for annotated TypeScript as drift baseline        |
+| S51  | Implement upward drift detector (code change -> spec mismatch) with deterministic diff |
+| S52  | Integrate upward drift checks into `ferret lint` and `ferret lint --ci` diagnostics    |
+| S53  | Extend `ferret review` / `--json` resolution context for code-origin drift events      |
+| S54  | Add validation scenarios and release evidence for upward drift coverage                |
+
+---
+
 ## GA Release Gate — Blockers
 
 SpecFerret does not ship GA until every gate below is complete and verified.
@@ -385,6 +408,15 @@ Validation repository execution details live in `spec/GA-VALIDATION-REPOS.MD`.
 ### Release Decision Rule
 
 If any gate G1-G7 is not met, release remains pre-GA.
+
+### Post-GA Growth Gates
+
+These gates are for post-GA adoption and product-scope expansion.
+
+| Gate | Requirement                     | Acceptance Criteria                                                                                               |
+| ---- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| G8   | One-line CI adoption            | Teams can enable drift enforcement via reusable GitHub Action without custom shell orchestration.                 |
+| G9   | Bidirectional drift enforcement | SpecFerret detects both spec-to-downstream drift and code-to-spec drift with deterministic classification and UX. |
 
 ---
 
@@ -434,6 +466,29 @@ Goal: formalize branch-based scenario coverage across existing validation reposi
 | S43   | G7   | Add opinionated SpecFerret scenario branches for layout, lint-first CI, and enforcement defaults | Scenario/specferret-opinionated-\* branch set              | Opinionated branches prove default workflow policy and guardrail behavior                       |
 | S44   | G7   | Update validation policy and runbook for branch-matrix operation, triage, and evidence capture   | Updated GA validation docs                                 | Maintainer can execute full branch matrix with no interpretation and collect complete artifacts |
 | S45   | G7   | Add release-readiness gate for matrix-green evidence on both repos for the same candidate tag    | Candidate release checklist update                         | Candidate is blocked if any required scenario branch is red in either validation repository     |
+
+### Sprint 6 — GitHub Action Adoption (Post-GA)
+
+Goal: remove CI adoption friction to one line (`uses: specferret/action@v1`) while preserving deterministic drift enforcement.
+
+| Story | Gate | Scope                                                                      | Deliverable                                         | Acceptance Test                                                                                  |
+| ----- | ---- | -------------------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| S46   | G8   | Publish reusable GitHub Action for `ferret lint --ci`                      | `specferret/action` v1 with usage docs              | Fresh repo workflow uses Action with no custom shell script and receives pass/fail drift outcome |
+| S47   | G8   | Add machine- and human-friendly Action outputs                             | PR summary + JSON artifact + stable output contract | Action run exposes consistent output fields and links artifacts in workflow summary              |
+| S48   | G8   | Publish starter workflow templates for monorepo and single-package layouts | Copy-paste workflow snippets + docs                 | New maintainer can enable CI drift checks in under 10 minutes                                    |
+| S49   | G8   | Define Action release/versioning policy and support window                 | Versioning policy doc + release checklist           | `v1` consumers get non-breaking updates; breaking changes require explicit major tag rollout     |
+
+### Sprint 7 — Upward Code-to-Spec Drift (Post-GA)
+
+Goal: detect and explain mismatches when implementation code changes but contract files are not updated.
+
+| Story | Gate | Scope                                                                                | Deliverable                                        | Acceptance Test                                                                |
+| ----- | ---- | ------------------------------------------------------------------------------------ | -------------------------------------------------- | ------------------------------------------------------------------------------ |
+| S50   | G9   | Deterministic code-shape baseline from annotated TypeScript                          | Code-shape snapshot model + fixtures               | Same commit produces byte-identical code snapshot hashes                       |
+| S51   | G9   | Upward drift classifier (code -> spec mismatch)                                      | Diff engine + breaking/non-breaking classification | Code-only breaking change without spec update is flagged reliably              |
+| S52   | G9   | Lint integration for upward drift diagnostics                                        | `ferret lint` / `--ci` output extensions           | CI fails with explicit code-origin drift context and impacted contract IDs     |
+| S53   | G9   | Guided resolution support for upward drift                                           | `ferret review` and `ferret review --json` updates | Review payload provides actionable options for code-origin drift remediation   |
+| S54   | G9   | Validation matrix additions and release evidence for bidirectional drift enforcement | External validation scenarios + evidence links     | Candidate release blocked when upward drift scenarios fail in validation repos |
 
 Sprint 5 status: Complete.
 

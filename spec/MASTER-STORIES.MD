@@ -258,6 +258,33 @@ Detailed acceptance criteria: `spec/SPRINT-5-STORIES.MD`.
 
 ---
 
+## Sprint 6 — GitHub Action Adoption (Planned)
+
+| Story | Description                                                                  |
+| ----- | ---------------------------------------------------------------------------- |
+| S46   | Reusable GitHub Action for `ferret lint --ci` (`uses: specferret/action@v1`) |
+| S47   | Stable Action outputs, workflow summary, and artifact linkage                |
+| S48   | Starter workflow templates for monorepo and single-package adoption          |
+| S49   | Action release/version policy and compatibility strategy                     |
+
+Detailed acceptance criteria: `spec/SPRINT-6-STORIES.MD`.
+
+---
+
+## Sprint 7 — Upward Code-to-Spec Drift (Planned)
+
+| Story | Description                                                                        |
+| ----- | ---------------------------------------------------------------------------------- |
+| S50   | Deterministic code-shape snapshot baseline for annotated TypeScript                |
+| S51   | Upward drift classifier for code -> spec mismatches                                |
+| S52   | Lint/CI integration for upward drift diagnostics                                   |
+| S53   | `ferret review` / `--json` support for code-origin drift resolution context        |
+| S54   | Validation scenarios and release-gate evidence for bidirectional drift enforcement |
+
+Detailed acceptance criteria: `spec/SPRINT-7-STORIES.MD`.
+
+---
+
 ## V3 — Sebastian's Vision (Not Yet Scoped)
 
 | Item | Description                                                         |
