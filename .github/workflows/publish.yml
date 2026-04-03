@@ -21,7 +21,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
           registry-url: "https://registry.npmjs.org"
 
       - run: bun install
@@ -34,11 +34,7 @@ jobs:
         run: bun packages/cli/dist/bin/ferret.js --version
 
       - name: Publish @specferret/core
-        run: cd packages/core && npm publish --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: cd packages/core && npm publish --access public
 
       - name: Publish @specferret/cli
-        run: cd packages/cli && npm publish --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: cd packages/cli && npm publish --access public

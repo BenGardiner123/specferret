@@ -90,7 +90,7 @@ LICENSE
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/BenGardiner123/specferret.git"
+    "url": "https://github.com/BenGardiner123/spec-ferret.git"
   },
   "homepage": "https://specferret.dev"
 }
@@ -120,7 +120,7 @@ LICENSE
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/BenGardiner123/specferret.git"
+    "url": "https://github.com/BenGardiner123/spec-ferret.git"
   },
   "homepage": "https://specferret.dev"
 }
@@ -208,11 +208,17 @@ Audit compiled `dist/bin/ferret.js` before publish and confirm the shebang is co
 
 1. Create npm org `@specferret` at npmjs.com — Ben owns this account
 2. Confirm `@specferret/core` and `@specferret/cli` package names are not taken
-3. Generate a publish token: npmjs.com → Account → Access Tokens → Granular token
-   - Scope: `@specferret/*`
-   - Permission: Read and Write
-   - Expiry: 365 days
-4. Store token as `NPM_TOKEN` in GitHub repo secrets — do not put it in the codebase
+3. Set repository visibility to public (`BenGardiner123/spec-ferret`) for npm provenance support
+4. Configure npm Trusted Publishers for both packages:
+
+- npmjs.com → Packages → `@specferret/core` → Settings → Trusted publishing
+- npmjs.com → Packages → `@specferret/cli` → Settings → Trusted publishing
+- Provider: GitHub Actions
+- Owner/User: `BenGardiner123`
+- Repository: `spec-ferret`
+- Workflow file: `publish.yml`
+
+5. Do not use a publish token in GitHub secrets after trusted publishing is active
 
 ---
 
@@ -310,19 +316,15 @@ jobs:
         run: bun packages/cli/dist/bin/ferret.js --version
 
       - name: Publish @specferret/core
-        run: cd packages/core && npm publish --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: cd packages/core && npm publish --access public
 
       - name: Publish @specferret/cli
-        run: cd packages/cli && npm publish --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: cd packages/cli && npm publish --access public
 ```
 
-**Provenance** (`--provenance`) links the published package to the exact
-GitHub commit it was built from. Developers can verify the package was not
-tampered with. Boris approves this. Use it.
+With trusted publishing configured and this repository public, npm automatically
+creates provenance attestations for GitHub-hosted runs. Do not pass `--provenance`
+for local/manual publishes.
 
 ---
 
@@ -381,8 +383,8 @@ For Sprint 1 the package boundary is:
 
 - [ ] **W01** — Create `@specferret` org on npmjs.com (Ben — 5 min)
 - [ ] **W02** — Confirm package names `@specferret/core` and `@specferret/cli` are unclaimed (Ben — 2 min)
-- [ ] **W03** — Generate npm publish token, store as `NPM_TOKEN` in GitHub secrets (Ben — 10 min)
-- [ ] **W04** — Create `specferret` GitHub org, transfer repo into it (Ben — 15 min)
+- [ ] **W03** — Set repo public (`BenGardiner123/spec-ferret`) for trusted publishing provenance (Ben — 2 min)
+- [ ] **W04** — Configure trusted publisher for `@specferret/core` and `@specferret/cli` in npm package settings (Ben — 10 min)
 
 ### Monorepo Restructure (Todd + Bruno)
 

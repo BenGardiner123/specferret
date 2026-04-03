@@ -260,18 +260,20 @@ bun run bootstrap:validation --type spec-kit --out ../specferret-validation-spec
 bun run bootstrap:validation --type bmad --out ../specferret-validation-bmad
 ```
 
-Current candidate evidence (2026-04-03):
+Released evidence (2026-04-03):
 
 - spec-kit validation run (success): https://github.com/BenGardiner123/spec-ferret-validation-spec-kit/actions/runs/23926425357
 - spec-kit commit SHA: `c6413cd1fa29e7a483c7a0ceaeded81f7e0771a2`
 - BMAD validation run (success): https://github.com/BenGardiner123/specferret-validation-bmad/actions/runs/23926426128
 - BMAD commit SHA: `b1039e0182188a9879d0ae596c88864c87833ae8`
+- npm package `@specferret/core@0.1.0`: https://www.npmjs.com/package/@specferret/core
+- npm package `@specferret/cli@0.1.0`: https://www.npmjs.com/package/@specferret/cli
 
-Note on candidate install path:
+Note on validation install path:
 
 - These validations ran before npm publication of `@specferret/cli`.
 - CI used a pinned repo-local bundle (`vendor/ferret.bundle.js`) to run the exact tested candidate.
-- After npm publication, switch validation workflows back to `bun install -g @specferret/cli@<candidate-version>`.
+- For release validation, use `bun install -g @specferret/cli@0.1.0`.
 
 ## Migration Notes (Pre-GA -> Current)
 
