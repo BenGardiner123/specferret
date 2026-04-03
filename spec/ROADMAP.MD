@@ -451,6 +451,34 @@ For S32-S33, terminal output must be structured enough that editor agents can re
 5. Validation evidence from spec-kit and BMAD repos is linked in release notes.
 6. Required Sprint 5 scenario branches are green on both validation repositories for the same candidate tag.
 
+### Sprint 5 Closeout Checklist (Systematic Execution)
+
+Use this ordered checklist to close S38-S45 with no ambiguity.
+
+1. Run matrix workflows for the same candidate version in both validation repos.
+2. Record run links, candidate tag, and commit SHAs for both repos.
+3. Confirm all 8 required branches are green in both repos for that same candidate.
+4. Verify S40 depth behavior explicitly on `scenario/transitive-impact-depth`:
+
+- JSON/report evidence shows direct impact (`depth: 1`) and transitive impact (`depth: 2+`).
+
+5. Verify S41 review flow explicitly with evidence for `accept`, `update`, and `reject` paths:
+
+- Capture before/after command output and JSON artifacts.
+
+6. Verify S42 determinism explicitly on `scenario/code-first-extract`:
+
+- Run `ferret extract` twice on same commit.
+- Prove byte-identical output for generated contract files.
+
+7. Confirm S43 scope is explicit in docs:
+
+- Recommended opinionated posture is documented as recommendation, not universal requirement.
+
+8. Update story statuses from Planned to Complete (or Deferred with rationale) for S38-S45.
+9. Link final evidence bundle in release notes and GA sign-off records.
+10. Block candidate release if any required branch is red in either repo.
+
 ---
 
 ## V3 — Sebastian's Vision

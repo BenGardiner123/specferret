@@ -175,6 +175,32 @@ Gate target: G7 hardening.
 - `spec/DOCUMENTATION-INDEX.MD`
 - `spec/MASTER-STORIES.MD`
 
+### Systematic Workthrough Checklist
+
+Use this list as the execution order for final Sprint 5 sign-off.
+
+1. Execute matrix workflows in both validation repos for the same candidate tag/version.
+2. Capture evidence for each repo:
+   - workflow run URL
+   - repo commit SHA
+   - candidate version/tag
+   - uploaded artifacts (`lint-ci-<scenario>.json`)
+3. Validate S40 transitive depth behavior on `scenario/transitive-impact-depth`:
+   - evidence must show direct (`depth: 1`) and transitive (`depth: 2+`) downstream impact.
+4. Validate S41 guided resolution behavior:
+   - run `accept`, `update`, and `reject` paths.
+   - store before/after outputs proving expected post-action state.
+5. Validate S42 extraction determinism on `scenario/code-first-extract`:
+   - run `ferret extract` twice on same commit.
+   - verify byte-identical generated contracts.
+6. Validate S43 opinionated workflow expectations are documented and passing.
+7. Reconcile docs and status markers:
+   - mark S38-S45 as Complete when evidence exists.
+   - if any story is deferred, include explicit rationale and owner.
+8. Apply S45 gate:
+   - candidate is blocked if any required scenario branch is red in either validation repo.
+9. Publish release evidence links in release notes.
+
 ---
 
 _© Laser Unicorn — MIT License_
