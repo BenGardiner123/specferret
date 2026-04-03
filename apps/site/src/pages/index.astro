@@ -3,8 +3,8 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
 <BaseLayout
-  title="SpecFerret | Keep Your Specs Honest"
-  description="SpecFerret finds drift between contracts and reality before production does."
+  title="SpecFerret: Spec Drift Detection CLI for API Contracts"
+  description="Detect API spec drift before production. SpecFerret CLI catches breaking changes in data contracts with pre-commit hooks."
 >
   <main>
     <header class="topbar">
@@ -16,10 +16,11 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
     <section class="hero">
       <p class="pill mono">Open source CLI • npm: @specferret/cli</p>
-      <h1>SpecFerret keeps your specs honest.</h1>
+      <h1>Catch spec drift before it breaks production.</h1>
       <p class="subhead">
-        Catch contract drift fast. Surface downstream impact. Block risky
-        commits before they break consumers.
+        SpecFerret is a CLI that detects when API specs, contracts, and shipped
+        behavior drift apart. Block risky commits with pre-commit checks and
+        clear impact reports.
       </p>
       <div class="cta-row">
         <a
@@ -30,6 +31,90 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           >Read the code</a
         >
       </div>
+      <pre
+        class="quick mono"><code>bun install -g @specferret/cli
+ferret init
+ferret lint</code></pre>
+    </section>
+
+    <section class="section why">
+      <h2>Why SpecFerret</h2>
+      <div class="proof-grid">
+        <article>
+          <h3>AI ships code quickly</h3>
+          <p>
+            LLM-assisted development accelerates changes, but specs are often
+            left behind. SpecFerret catches that mismatch before deploy.
+          </p>
+        </article>
+        <article>
+          <h3>Breaking vs non-breaking</h3>
+          <p>
+            It classifies drift so teams do not panic over harmless optional
+            additions but do block true consumer-breaking changes.
+          </p>
+        </article>
+        <article>
+          <h3>Commit-time enforcement</h3>
+          <p>
+            Pre-commit hooks fail fast and keep bad contract changes out of main
+            branch and out of production.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section use-cases">
+      <h2>Use Cases</h2>
+      <div class="proof-grid">
+        <article>
+          <h3>API teams</h3>
+          <p>
+            Detect shape changes in request and response contracts before
+            clients break in staging or prod.
+          </p>
+        </article>
+        <article>
+          <h3>Multi-team repos</h3>
+          <p>
+            Backend changes can impact many consumers. SpecFerret shows direct
+            and transitive impact in one report.
+          </p>
+        </article>
+        <article>
+          <h3>AI-assisted workflows</h3>
+          <p>
+            Keep generated code and contract docs in sync when rapid edits land
+            through agents or pair-programming loops.
+          </p>
+        </article>
+        <article>
+          <h3>TypeScript shape checks</h3>
+          <p>
+            Validate declared types against contract expectations to reduce
+            drift between docs and runtime reality.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section how">
+      <h2>How It Works</h2>
+      <ol>
+        <li>
+          <span class="mono">1.</span>
+          Define contracts in markdown with frontmatter schema fields.
+        </li>
+        <li>
+          <span class="mono">2.</span>
+          Run <span class="mono">ferret lint</span> to detect drift and classify severity.
+        </li>
+        <li>
+          <span class="mono">3.</span>
+          Use <span class="mono">ferret review</span> to inspect downstream impact
+          and resolve safely.
+        </li>
+      </ol>
     </section>
 
     <section class="proof-grid">
@@ -54,15 +139,6 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           on npm, and evidence-backed validation runs.
         </p>
       </article>
-    </section>
-
-    <section class="quickstart">
-      <h2>Quickstart</h2>
-      <pre
-        class="mono"><code>bun install -g @specferret/cli
-ferret init
-ferret scan
-ferret lint</code></pre>
     </section>
   </main>
 </BaseLayout>
@@ -125,9 +201,34 @@ ferret lint</code></pre>
 
   .subhead {
     margin: 0;
-    max-width: 42ch;
+    max-width: 48ch;
     color: var(--muted);
     font-size: 1.05rem;
+  }
+
+  .quick {
+    margin: 1rem 0 0;
+    border: 1px solid color-mix(in oklab, var(--brand) 35%, var(--line));
+    border-radius: 12px;
+    padding: 0.8rem;
+    color: #1e2e45;
+    background: #f6fff9;
+    line-height: 1.5;
+    overflow-x: auto;
+  }
+
+  .section {
+    margin-top: 1.2rem;
+    background: #ffffffbd;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 1rem;
+    animation: rise 700ms ease-out;
+  }
+
+  .section h2 {
+    margin: 0 0 0.8rem;
+    font-size: 1.2rem;
   }
 
   .cta-row {
@@ -153,7 +254,7 @@ ferret lint</code></pre>
   }
 
   .proof-grid {
-    margin-top: 1.2rem;
+    margin-top: 1rem;
     display: grid;
     gap: 0.8rem;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -172,35 +273,50 @@ ferret lint</code></pre>
     font-size: 1.1rem;
   }
 
+  article h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.04rem;
+  }
+
   article p {
     margin: 0;
     color: var(--muted);
     line-height: 1.4;
   }
 
-  .quickstart {
-    margin-top: 1rem;
-    background: #142132;
-    color: #edf2ff;
-    border-radius: 16px;
-    border: 1px solid #23324a;
-    padding: 1rem;
-    animation: rise 780ms ease-out;
+  ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.6rem;
   }
 
-  .quickstart h2 {
+  li {
+    display: flex;
+    gap: 0.55rem;
+    align-items: flex-start;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 0.7rem 0.8rem;
+    background: #fff;
+    color: var(--muted);
+  }
+
+  .how .mono {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .use-cases h2,
+  .why h2,
+  .how h2 {
     margin: 0 0 0.7rem;
-    font-size: 1rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: #ffc861;
+    color: #15385a;
   }
 
   pre {
-    margin: 0;
-    overflow-x: auto;
     font-size: 0.95rem;
-    line-height: 1.5;
   }
 
   @keyframes rise {

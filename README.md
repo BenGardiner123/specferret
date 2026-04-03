@@ -1,35 +1,68 @@
-````markdown
 # SpecFerret keeps your specs honest.
 
-AI coding tools build fast. Specs drift faster.
+SpecFerret is a Bun-first CLI that detects contract drift before it breaks downstream consumers.
 
-## Runtime
+[![npm cli](https://img.shields.io/npm/v/@specferret/cli)](https://www.npmjs.com/package/@specferret/cli)
+[![npm core](https://img.shields.io/npm/v/@specferret/core)](https://www.npmjs.com/package/@specferret/core)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-SpecFerret targets Bun 1.0+ and ships as a CLI tool.
-It uses Bun's built-in `bun:sqlite` backend for the local graph store, so there is no separate runtime shim or database setup.
+AI-assisted coding accelerates implementation. Specs drift just as fast. SpecFerret turns markdown contracts into a dependency graph, classifies drift (breaking vs non-breaking), and blocks unsafe changes in local dev and CI.
+
+Website: [specferret.dev](https://specferret.dev)
+
+## Why teams use it
+
+- Deterministic drift detection with fast feedback (`ferret lint`)
+- Direct and transitive impact reporting (`ferret review`)
+- Pre-commit enforcement so breaking changes do not slip through
+- CI mode with machine-readable output
+- Bun-native local store (`bun:sqlite`) with no extra service setup
 
 ## Install
 
 ```bash
 bun install -g @specferret/cli
+```
+
+Requirements:
+
+- Bun 1.0 or later
+
+Install Bun at [bun.sh](https://bun.sh).
+
+## Quickstart (5 minutes)
+
+```bash
 ferret init
+ferret scan
 ferret lint
 ```
 
-`ferret init` installs a pre-commit hook by default (when `.git/hooks` exists).
-Use `ferret init --no-hook` to opt out.
+If clean:
 
-Requires Bun 1.0 or later. Install Bun at [bun.sh](https://bun.sh).
+```text
+✓ ferret  1 contracts  0 drift  12ms
+```
 
-If you want the shortest end-to-end onboarding path, start with:
+If drift exists:
 
-- [docs/QUICKSTART.md](docs/QUICKSTART.md)
+```text
+ferret  1 contracts need review
+```
 
-That guide covers install, first clean lint, first blocked drift, first `ferret review`, and common failure recovery in one path.
+Then run:
 
-## Your First Spec
+```bash
+ferret review
+```
 
-After `ferret init`, open `contracts/example.contract.md` and replace it with your first real contract:
+Note: `ferret init` installs a pre-commit hook by default (when `.git/hooks` exists). Use `ferret init --no-hook` to opt out.
+
+For the fastest onboarding path, see [docs/QUICKSTART.md](docs/QUICKSTART.md).
+
+## Your first contract
+
+Create or edit a file in `contracts/` with frontmatter:
 
 ```markdown
 ---
@@ -59,44 +92,57 @@ Run:
 ferret lint
 ```
 
-You should see:
+Change a required field and run lint again to see drift detection and review guidance.
 
-```
-✓ ferret  1 contracts  0 drift  12ms
-```
+## Command reference
 
-Now change `required: [id, email]` to `required: [id]` and run lint again:
+| Command                | Purpose                                      |
+| ---------------------- | -------------------------------------------- |
+| `ferret init`          | Scaffold `.ferret/` state and default config |
+| `ferret scan`          | Parse contracts and refresh graph state      |
+| `ferret lint`          | Detect and classify contract drift           |
+| `ferret lint --ci`     | CI mode, JSON output, non-zero on drift      |
+| `ferret review`        | Resolve blocking drift interactively         |
+| `ferret review --json` | Emit review context for tooling/agents       |
+| `ferret extract`       | Generate contracts from annotated TypeScript |
 
-```bash
-ferret lint
-```
+## CI integration
 
-```
-ferret  1 contracts need review
-```
-
-and guidance to run `ferret review`.
-
-That's spec drift. SpecFerret caught it before your AI assistant, your teammates, or your users did.
-
-Already using BMAD or spec-kit? Skip the example file. Pick a data shape from your PRD or architecture document, create a `.contract.md` file in `contracts/`, and run `ferret lint`. SpecFerret takes it from there.
-
-`ferret scan` is still available for manual graph updates and debugging, but normal day-to-day flow should be lint-first.
-
-## Resolving Drift
-
-When `ferret lint` blocks, run:
+Use in pipelines:
 
 ```bash
-ferret review
+ferret lint --ci
 ```
 
-`ferret review` shows:
+Baseline modes:
 
-- the drifting contract id
-- the source contract file
-- direct and transitive downstream impact
-- the available actions: accept, update, reject
+- Default: `--ci-baseline committed` (requires committed `.ferret/context.json`)
+- Optional: `--ci-baseline rebuild` (useful for ephemeral runners)
+
+Examples:
+
+```bash
+# Recommended when context.json is committed
+ferret lint --ci
+
+# Ephemeral runner mode
+ferret lint --ci --ci-baseline rebuild
+```
+
+GitHub Actions step:
+
+```yaml
+- run: ferret lint --ci
+```
+
+## How drift resolution works
+
+When drift is detected, `ferret review` shows:
+
+- Drifting contract id
+- Source contract file
+- Direct and transitive downstream impact
+- Resolution actions (accept, update, reject)
 
 Typical flow:
 
@@ -106,98 +152,42 @@ ferret review
 ferret lint
 ```
 
-If you want editor or agent tooling to consume the review context directly, use:
-
-```bash
-ferret review --json
-```
-
-That emits stable JSON to stdout with the current reviewable items, grouped impact, recommended action, and available options. Use `--contract <id>` or `--all` with `--action <accept|update|reject>` for non-interactive review steps.
-
-## How It Works
-
-SpecFerret watches your spec files. Each spec exports a contract — a typed JSON Schema shape defined in lightweight YAML frontmatter.
-
-When a shape changes, SpecFerret classifies it: breaking or non-breaking. Breaking changes block your pre-commit hook. Non-breaking changes pass silently.
-
-No LLM. No network call. No opinion. Just your specs, your contracts, and a fast deterministic check every time you commit.
-
-## Contract Types
-
-SpecFerret understands six kinds of contracts:
+## Contract types
 
 | Type     | Use for                                         |
 | -------- | ----------------------------------------------- |
 | `api`    | REST endpoints, GraphQL operations, RPC methods |
 | `table`  | Database tables, collections, schemas           |
 | `type`   | Shared TypeScript types, interfaces, enums      |
-| `event`  | Domain events, webhooks, message queue payloads |
-| `flow`   | User flows, multi-step processes                |
-| `config` | Configuration shapes, feature flags             |
+| `event`  | Domain events, webhooks, message payloads       |
+| `flow`   | User flows and multi-step processes             |
+| `config` | Configuration shapes and feature flags          |
 
-## CI Integration
+## Use cases
 
-```bash
-ferret lint --ci
-```
+- API teams preventing consumer-breaking contract changes
+- Multi-team repos where one change affects many downstream specs
+- AI-assisted workflows where generated code can outpace docs
+- Type/schema governance for long-lived product surfaces
 
-Outputs JSON, exits 1 on drift. Drop it in any pipeline.
+## BMAD and spec-kit integration
 
-CI baseline modes:
+SpecFerret is not a planning tool. It enforces contract consistency downstream of planning tools.
 
-- Default: `--ci-baseline committed` (requires committed `.ferret/context.json`)
-- Optional: `--ci-baseline rebuild` (rebuilds baseline state in CI)
+If you use BMAD or spec-kit:
 
-Examples:
+1. Produce PRD/architecture/stories as usual
+2. Capture concrete shapes in `.contract.md` files under `contracts/`
+3. Run `ferret lint` to validate and enforce consistency
 
-```bash
-# Recommended when context.json is committed
-ferret lint --ci
+Example structure:
 
-# Use in ephemeral CI runners if you do not commit context.json
-ferret lint --ci --ci-baseline rebuild
-```
-
-S34 end-to-end smoke harness:
-
-```bash
-# Clean path: init -> lint -> break -> block -> review -> green
-bun run smoke:s34
-
-# Intentional failure seed: init -> lint -> break -> block
-bun run smoke:s34:drift
-```
-
-```yaml
-# GitHub Actions
-- run: ferret lint --ci
-```
-
-## Badge
-
-```markdown
-[![SpecFerret](https://img.shields.io/badge/spec--drift-protected-green)](https://specferret.dev)
-```
-
-[![SpecFerret](https://img.shields.io/badge/spec--drift-protected-green)](https://specferret.dev)
-
-## Working Alongside BMAD and spec-kit
-
-SpecFerret is not a planning tool. It lives downstream of your planning workflow.
-
-If you use BMAD, spec-kit, or any structured planning process, the integration is straightforward:
-
-1. Your planning workflow produces a PRD, architecture doc, or stories
-2. When that planning defines a concrete data shape — an API response, a table schema, a shared type — create a `.contract.md` file in `contracts/` with `ferret:` frontmatter
-3. Run `ferret lint` to register and validate the contract
-4. From that point, SpecFerret detects if the shape drifts
-
-```
+```text
 your-project/
-  _bmad-output/          ← BMAD planning artifacts
+  _bmad-output/
     PRD.md
     architecture.md
-  contracts/             ← SpecFerret guards this
+  contracts/
     auth/
       jwt.contract.md
     tables/
@@ -205,11 +195,9 @@ your-project/
   ferret.config.json
 ```
 
-Planning tools define intent. SpecFerret enforces it.
+### Code-first extract
 
-### Code-First Extract (`ferret extract`)
-
-For deterministic, non-LLM contract bootstrap from code, annotate TypeScript declarations:
+Annotate TypeScript declarations:
 
 ```ts
 // @ferret-contract: api.GET/users api
@@ -225,85 +213,41 @@ Then run:
 ferret extract
 ```
 
-This scaffolds `.contract.md` files under `contracts/` using deterministic mapping and exits non-zero if any annotated symbol fails extraction.
+This scaffolds `.contract.md` files under `contracts/` using deterministic mapping and exits non-zero if extraction fails.
 
-### Agent Skills
-
-To automate the bridge — having your AI agent read planning docs and scaffold the `.contract.md` files for you — copy the agent skill template for your tool:
-
-| Tool           | Template                                                                                                 | Install location                           |
-| -------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| Claude Code    | [docs/agent-skills/ferret-extract.claude-command.md](docs/agent-skills/ferret-extract.claude-command.md) | `.claude/commands/ferret-extract.md`       |
-| GitHub Copilot | [docs/agent-skills/ferret-extract.prompt.md](docs/agent-skills/ferret-extract.prompt.md)                 | `.github/prompts/ferret-extract.prompt.md` |
-
-Once installed, invoke it (`/ferret-extract` in Claude Code, or via Copilot agent mode) and point it at your planning docs. It will create the contract files and run `ferret lint`.
-
-## GA Validation Proof (spec-kit + BMAD)
-
-SpecFerret GA is blocked unless validation passes in two external workflow repos:
-
-1. A spec-kit validation repository
-2. A BMAD validation repository
-
-Validation policy and gates:
-
-- `spec/GA-VALIDATION-REPOS.MD`
-
-Execution runbook (copy-paste commands, CI sequence, evidence checklist):
-
-- `spec/GA-VALIDATION-RUNBOOK.MD`
-
-Template bootstrap:
-
-```bash
-bun run bootstrap:validation --type spec-kit --out ../specferret-validation-spec-kit
-bun run bootstrap:validation --type bmad --out ../specferret-validation-bmad
-```
+## Validation evidence
 
 Released evidence (2026-04-03):
 
-- spec-kit validation run (success): https://github.com/BenGardiner123/spec-ferret-validation-spec-kit/actions/runs/23926425357
-- spec-kit commit SHA: `c6413cd1fa29e7a483c7a0ceaeded81f7e0771a2`
-- BMAD validation run (success): https://github.com/BenGardiner123/specferret-validation-bmad/actions/runs/23926426128
-- BMAD commit SHA: `b1039e0182188a9879d0ae596c88864c87833ae8`
-- npm package `@specferret/core@0.1.0`: https://www.npmjs.com/package/@specferret/core
-- npm package `@specferret/cli@0.1.0`: https://www.npmjs.com/package/@specferret/cli
+- spec-kit validation run: https://github.com/BenGardiner123/spec-ferret-validation-spec-kit/actions/runs/23926425357
+- BMAD validation run: https://github.com/BenGardiner123/specferret-validation-bmad/actions/runs/23926426128
+- npm package `@specferret/core@0.1.1`: https://www.npmjs.com/package/@specferret/core
+- npm package `@specferret/cli@0.1.1`: https://www.npmjs.com/package/@specferret/cli
 
-Note on validation install path:
+## Documentation map
 
-- These validations ran before npm publication of `@specferret/cli`.
-- CI used a pinned repo-local bundle (`vendor/ferret.bundle.js`) to run the exact tested candidate.
-- For release validation, use `bun install -g @specferret/cli@0.1.0`.
+- [docs/QUICKSTART.md](docs/QUICKSTART.md)
+- [spec/DOCUMENTATION-INDEX.MD](spec/DOCUMENTATION-INDEX.MD)
+- [spec/ROADMAP.MD](spec/ROADMAP.MD)
+- [spec/GA-VALIDATION-REPOS.MD](spec/GA-VALIDATION-REPOS.MD)
+- [spec/GA-VALIDATION-RUNBOOK.MD](spec/GA-VALIDATION-RUNBOOK.MD)
+- [spec/MASTER-ARCHITECTURE.MD](spec/MASTER-ARCHITECTURE.MD)
+- [spec/CONTRACT-SCHEMA.MD](spec/CONTRACT-SCHEMA.MD)
 
-## Migration Notes (Pre-GA -> Current)
+## Development
 
-Behavior changes teams must adopt:
+```bash
+bun install
+bun test
+bun run build
+```
 
-1. `ferret init` now installs a pre-commit hook by default (opt-out with `--no-hook`).
-2. CI baseline behavior is now explicit:
+Monorepo packages:
 
-- default is `ferret lint --ci --ci-baseline committed` (requires committed `.ferret/context.json`)
-- alternative is `ferret lint --ci --ci-baseline rebuild` for ephemeral runners.
-
-If your existing CI intermittently passed/fails around baseline state, migrate to one baseline strategy per repository and document it in your pipeline README.
-
-## Documentation Map
-
-Primary documentation index:
-
-- `spec/DOCUMENTATION-INDEX.MD`
-- `docs/QUICKSTART.md` (single onboarding path + troubleshooting)
-
-Critical docs for release quality:
-
-- `spec/ROADMAP.MD` (gates, blockers, execution sequence)
-- `spec/GA-VALIDATION-REPOS.MD` (policy)
-- `spec/GA-VALIDATION-RUNBOOK.MD` (execution)
-- `spec/SPRINT-2-STORIES.MD` and `spec/SPRINT-3-STORIES.MD` (implementation backlog)
-
-Documentation is part of done. Workflow changes are not complete until docs are updated in the same PR.
+- `packages/core` -> `@specferret/core`
+- `packages/cli` -> `@specferret/cli`
+- `apps/site` -> specferret.dev
 
 ---
 
 MIT License
-````

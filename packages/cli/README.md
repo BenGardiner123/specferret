@@ -1,6 +1,11 @@
 # @specferret/cli
 
-SpecFerret CLI for spec drift detection.
+Spec drift detection CLI for contract-driven teams.
+
+[![npm version](https://img.shields.io/npm/v/@specferret/cli)](https://www.npmjs.com/package/@specferret/cli)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
+
+`@specferret/cli` catches breaking contract drift before merge by scanning markdown contracts, classifying impact, and enforcing safe resolution paths.
 
 ## Install
 
@@ -8,20 +13,50 @@ SpecFerret CLI for spec drift detection.
 bun install -g @specferret/cli
 ```
 
-## Usage
+## Quickstart
+
+```bash
+ferret init
+ferret scan
+ferret lint
+```
+
+If drift is detected:
+
+```bash
+ferret review
+```
+
+## Core commands
 
 ```bash
 ferret init
 ferret scan
 ferret lint
 ferret review
+ferret status
+ferret reconcile
 ```
 
-## Runtime
+## CI usage
 
-The CLI is built for Bun.
+```bash
+ferret lint --ci
+```
 
-## Repository
+Supports CI baseline modes:
+
+- `--ci-baseline committed` (default)
+- `--ci-baseline rebuild`
+
+## Runtime requirements
+
+- Bun 1.0+
+
+The CLI is Bun-first and designed for low-latency local and CI runs.
+
+## Links
 
 - Source: https://github.com/BenGardiner123/spec-ferret
-- Homepage: https://specferret.dev
+- Docs: https://specferret.dev
+- Core package: https://www.npmjs.com/package/@specferret/core

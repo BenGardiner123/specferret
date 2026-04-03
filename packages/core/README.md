@@ -1,6 +1,20 @@
 # @specferret/core
 
-SpecFerret core engine for contract extraction, validation, storage, and reconciliation.
+Core engine for SpecFerret contract extraction, validation, graph reconciliation, and drift analysis.
+
+[![npm version](https://img.shields.io/npm/v/@specferret/core)](https://www.npmjs.com/package/@specferret/core)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
+
+## What this package is for
+
+`@specferret/core` is the runtime library behind the CLI. Use it when you want to embed SpecFerret behavior in scripts, custom tooling, or internal workflows.
+
+It includes:
+
+- Store implementations (`sqlite`, `postgres`)
+- Frontmatter extraction and schema validation
+- Reconciler logic for direct/transitive impact
+- Context graph generation utilities
 
 ## Install
 
@@ -8,18 +22,28 @@ SpecFerret core engine for contract extraction, validation, storage, and reconci
 npm i @specferret/core
 ```
 
-## Runtime
+## Runtime requirements
 
-SpecFerret is designed to run with Bun and expects Bun-compatible runtime behavior.
+- Bun 1.0+
 
-## What this package contains
+SpecFerret core is Bun-first and uses Bun-compatible runtime behavior.
 
-- Store implementations (`sqlite`, `postgres`)
-- Contract extractors and schema validator
-- Reconciler for drift impact analysis
-- Context writer utilities
+## Typical consumers
 
-## Repository
+- Internal platform tooling that needs drift checks in-process
+- CI wrappers that need machine-readable drift metadata
+- Custom developer workflows on top of SpecFerret reconciliation data
+
+## Looking for the CLI?
+
+Install `@specferret/cli` if you want the end-user command interface:
+
+```bash
+bun install -g @specferret/cli
+```
+
+## Links
 
 - Source: https://github.com/BenGardiner123/spec-ferret
-- Homepage: https://specferret.dev
+- Docs: https://specferret.dev
+- CLI package: https://www.npmjs.com/package/@specferret/cli
