@@ -258,7 +258,7 @@ Detailed acceptance criteria: `spec/SPRINT-5-STORIES.MD`.
 
 ---
 
-## Sprint 6 — GitHub Action Adoption (In progress)
+## Sprint 6 — GitHub Action Adoption (Complete)
 
 | Story | Description                                                                  |
 | ----- | ---------------------------------------------------------------------------- |

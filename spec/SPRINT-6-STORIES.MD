@@ -6,7 +6,7 @@ This sprint targets G8 from ROADMAP.MD.
 
 ---
 
-## Status: In progress
+## Status: Complete
 
 Goal: make CI adoption one-line and deterministic through a reusable GitHub Action.
 Gate target: G8.
@@ -27,7 +27,7 @@ Gate target: G8.
 - Action exits non-zero on drift exactly as CLI does
 - Action docs include minimal copy-paste workflow
 
-**Status:** In progress
+**Status:** Complete
 
 ---
 
@@ -44,7 +44,7 @@ Gate target: G8.
 - JSON artifact is preserved for every run
 - Output contract is documented for tooling/agent consumption
 
-**Status:** In progress
+**Status:** Complete
 
 ---
 
@@ -61,7 +61,7 @@ Gate target: G8.
 - Templates are validated by test repositories or fixture workflows
 - Docs include exact copy-paste examples
 
-**Status:** In progress
+**Status:** Complete
 
 ---
 
@@ -78,7 +78,7 @@ Gate target: G8.
 - Release checklist includes Action smoke validation before publish
 - Action docs state supported runtimes and deprecation policy
 
-**Status:** In progress
+**Status:** Complete
 
 ---
 
@@ -127,25 +127,25 @@ Use this ordered list to execute S46-S49 with no ambiguity.
 
 Populate all fields before changing Sprint 6 status to Complete.
 
-- Candidate version/tag: `0.1.2 (Sprint 6 in progress)`
-- Candidate commit SHA: `45689d40e1bfacebe23a0ce406d08f87cd13d22a`
-- Action release tag: `v1.0.0`
-- Action major tag alias update (`v1`): `yes -> f5ee352674d38092147c166cfb7b745974f94d94`
+- Candidate version/tag: `0.1.3`
+- Candidate commit SHA: `ec977d93adc1b6d76d5a271a5d60f104a2314f57`
+- Action release tag: `v1.0.1`
+- Action major tag alias update (`v1`): `yes -> 4cc9769089b30eb3569e4662d919278b8b3cbd88`
 - Action repository URL: `https://github.com/BenGardiner123/action`
-- Action repository commit SHA: `f5ee352674d38092147c166cfb7b745974f94d94`
+- Action repository commit SHA: `4cc9769089b30eb3569e4662d919278b8b3cbd88`
 
 S46 evidence:
 
 - Action metadata file path: `.github/actions/ferret-lint/action.yml`
-- Smoke workflow run URL (single-package): `PENDING (tracked via .github/workflows/ferret-action-smoke.yml)`
-- Smoke workflow run URL (monorepo): `PENDING (tracked via .github/workflows/ferret-action-smoke.yml)`
-- Smoke workflow run URL (PR-only): `PENDING (tracked via .github/workflows/ferret-action-smoke.yml)`
-- Fixture repository 1 commit SHA: `PENDING`
-- Fixture repository 2 commit SHA: `PENDING`
+- Smoke workflow run URL (single-package): `https://github.com/BenGardiner123/spec-ferret/actions/runs/23965790753/job/69905345954`
+- Smoke workflow run URL (monorepo): `https://github.com/BenGardiner123/spec-ferret/actions/runs/23965790753/job/69905345965`
+- Smoke workflow run URL (PR-only): `https://github.com/BenGardiner123/spec-ferret/actions/runs/23965790753/job/69905346043`
+- Fixture repository 1 commit SHA: `BenGardiner123/spec-ferret-validation-spec-kit@bbe4cac9554902f93a6cca791bec8585d004f3b6`
+- Fixture repository 2 commit SHA: `BenGardiner123/specferret-validation-bmad@6ea519f0a978414e0dc57fd01c399637fb8b2fcb`
 
 S47 evidence:
 
-- Workflow summary screenshot/artifact link: `PENDING`
+- Workflow summary screenshot/artifact link: `https://github.com/BenGardiner123/spec-ferret/actions/runs/23965790753` (artifacts: `/artifacts/6266826762`, `/artifacts/6266826119`, `/artifacts/6266826727`)
 - JSON artifact example link: `docs/ci-templates/ferret-lint-ci-sample.json`
 - Output schema doc link: `docs/ci-templates/specferret-action-output-contract.md`
 
@@ -164,11 +164,11 @@ S49 evidence:
 
 Final sign-off:
 
-- Reviewer: `TODO`
-- Sign-off date (UTC): `TODO`
+- Reviewer: `BenGardiner123`
+- Sign-off date (UTC): `2026-04-04`
 - Sprint 6 status set to Complete in:
-  - `spec/ROADMAP.MD`: `TODO`
-  - `spec/MASTER-STORIES.MD`: `TODO`
+   - `spec/ROADMAP.MD`: `Complete`
+   - `spec/MASTER-STORIES.MD`: `Complete`
 
 ---
 

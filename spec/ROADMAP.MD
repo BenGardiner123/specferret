@@ -349,7 +349,7 @@ This section is an archived planning snapshot. Current implementation status for
 
 ---
 
-## Sprint 6 — Adoption Distribution (Planned)
+## Sprint 6 — Adoption Distribution (Complete)
 
 | Task | Description                                                                 |
 | ---- | --------------------------------------------------------------------------- |
@@ -471,7 +471,7 @@ Goal: formalize branch-based scenario coverage across existing validation reposi
 
 Goal: remove CI adoption friction to one line (`uses: BenGardiner123/action@v1`) while preserving deterministic drift enforcement.
 
-Sprint 6 status: In progress.
+Sprint 6 status: Complete.
 
 | Story | Gate | Scope                                                                      | Deliverable                                         | Acceptance Test                                                                                  |
 | ----- | ---- | -------------------------------------------------------------------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
