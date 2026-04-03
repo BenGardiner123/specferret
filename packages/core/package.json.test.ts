@@ -14,7 +14,9 @@ describe("@specferret/core package.json integrity", () => {
 
       const normalized = exportPath.replace(/^\.\//, "");
       const exportRoot = normalized.split("/")[0];
-      const isPublished = publishedRoots.some((publishedRoot) => publishedRoot === exportRoot);
+      const isPublished = publishedRoots.some(
+        (publishedRoot) => publishedRoot === exportRoot,
+      );
 
       assert.ok(
         isPublished,

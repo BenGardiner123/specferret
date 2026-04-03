@@ -167,8 +167,8 @@ Final sign-off:
 - Reviewer: `BenGardiner123`
 - Sign-off date (UTC): `2026-04-04`
 - Sprint 6 status set to Complete in:
-   - `spec/ROADMAP.MD`: `Complete`
-   - `spec/MASTER-STORIES.MD`: `Complete`
+  - `spec/ROADMAP.MD`: `Complete`
+  - `spec/MASTER-STORIES.MD`: `Complete`
 
 ---
 
