@@ -29,9 +29,6 @@ jobs:
         with:
           bun-version: 1.3.11
 
-      - name: Install ferret packages for smoke fixture setup
-        run: bun add -g @specferret/core @specferret/cli
-
       - name: Prepare smoke fixture
         id: fixture
         shell: bash
@@ -42,14 +39,14 @@ jobs:
           mkdir -p "$FIXTURE_DIR"
           cd "$FIXTURE_DIR"
 
-          ferret init --no-hook
+          bun "$GITHUB_WORKSPACE/packages/cli/bin/ferret.ts" init --no-hook
 
           if [ "${{ matrix.mode }}" = "monorepo" ]; then
             mkdir -p apps/web packages/shared
             printf "monorepo smoke fixture\n" > apps/web/README.md
           fi
 
-          ferret scan
+          bun "$GITHUB_WORKSPACE/packages/cli/bin/ferret.ts" scan
 
           echo "fixture_dir=$FIXTURE_DIR" >> "$GITHUB_OUTPUT"
 
@@ -57,5 +54,6 @@ jobs:
         uses: ./.github/actions/ferret-lint
         with:
           baseline-mode: ${{ matrix.baseline }}
+          install-command: npm install -g @specferret/core @specferret/cli
           working-directory: ${{ steps.fixture.outputs.fixture_dir }}
           artifact-name: ferret-lint-ci-${{ matrix.mode }}
