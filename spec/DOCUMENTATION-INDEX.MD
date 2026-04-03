@@ -20,16 +20,17 @@ Single entry point for SpecFerret planning and GA validation documentation.
 
 - `spec/ROADMAP.MD` — sprint roadmap, GA gates, execution breakdown
 - `spec/SPRINT-1-STORIES.MD` — completed sprint stories and acceptance criteria
-- `spec/SPRINT-2-STORIES.MD` — planned stories for G1-G3
-- `spec/SPRINT-3-STORIES.MD` — planned stories for G4-G5
-- `spec/SPRINT-4-STORIES.MD` — resolution UX and GA hardening stories
+- `spec/SPRINT-2-STORIES.MD` — completed stories for G1-G3
+- `spec/SPRINT-3-STORIES.MD` — completed stories for G4-G5
+- `spec/SPRINT-4-STORIES.MD` — completed resolution UX and GA hardening stories
+- `spec/SPRINT-5-STORIES.MD` — branch-matrix dogfooding coverage stories (S38-S45)
 
 ---
 
 ## GA Validation Docs
 
-- `spec/GA-VALIDATION-REPOS.MD` — hard GA policy for external proof repos
-- `spec/GA-VALIDATION-RUNBOOK.MD` — step-by-step execution and evidence capture
+- `spec/GA-VALIDATION-REPOS.MD` — branch-matrix GA policy for external proof repos
+- `spec/GA-VALIDATION-RUNBOOK.MD` — branch-matrix execution and evidence capture runbook
 - `spec/validation-repo-templates/spec-kit/` — spec-kit validation template and CI workflow
 - `spec/validation-repo-templates/bmad/` — BMAD validation template and CI workflow
 

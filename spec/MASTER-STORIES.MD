@@ -235,6 +235,23 @@ Do not build these in Sprint 1. They are listed here for scope clarity only.
 
 ---
 
+## Sprint 5 — Branch-Matrix Dogfooding (Planned)
+
+| Story | Description                                                                                    |
+| ----- | ---------------------------------------------------------------------------------------------- |
+| S38   | Canonical scenario branch taxonomy across spec-kit and BMAD validation repositories            |
+| S39   | Deterministic branch assertion matrix (exit code, drift class, review requirement)             |
+| S40   | Transitive impact-depth scenario validation                                                    |
+| S41   | Guided resolution scenario flow (`accept`, `update`, `reject`)                                 |
+| S42   | Code-first extraction determinism scenario (`ferret extract`)                                  |
+| S43   | Opinionated SpecFerret scenario branch set (layout + lint-first CI + enforcement defaults)     |
+| S44   | Branch-matrix validation policy and runbook hardening                                          |
+| S45   | Candidate release gate upgrade requiring matrix-green evidence in both validation repositories |
+
+Detailed acceptance criteria: `spec/SPRINT-5-STORIES.MD`.
+
+---
+
 ## V3 — Sebastian's Vision (Not Yet Scoped)
 
 | Item | Description                                                         |

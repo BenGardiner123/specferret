@@ -1,0 +1,12 @@
+{
+  "scenario": {
+    "name": "main-baseline",
+    "branch": "main",
+    "description": "Clean baseline: no drift expected"
+  },
+  "expected": {
+    "exitCode": 0,
+    "driftClass": "clean",
+    "reviewRequired": false
+  }
+}

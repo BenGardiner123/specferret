@@ -6,7 +6,7 @@ This sprint targets G1-G3 from ROADMAP.MD.
 
 ---
 
-## Status: Planned
+## Status: ✓ Complete
 
 Goal: remove manual setup friction and make enforcement deterministic.
 Gate target: G1, G2, G3.

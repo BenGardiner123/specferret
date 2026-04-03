@@ -4,42 +4,39 @@ on:
   workflow_dispatch:
 
 jobs:
-  baseline-pass:
+  scenario-matrix:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario:
+          - id: main
+            ref: main
+          - id: breaking-required-field
+            ref: scenario/breaking-required-field
+          - id: breaking-type-change
+            ref: scenario/breaking-type-change
+          - id: nonbreaking-optional-add
+            ref: scenario/nonbreaking-optional-add
+          - id: transitive-impact-depth
+            ref: scenario/transitive-impact-depth
+          - id: review-resolution-flow
+            ref: scenario/review-resolution-flow
+          - id: code-first-extract
+            ref: scenario/code-first-extract
+          - id: specferret-opinionated-layout
+            ref: scenario/specferret-opinionated-layout
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.scenario.ref }}
       - uses: oven-sh/setup-bun@v2
       - name: Prepare baseline
-        run: bun vendor/ferret.bundle.js init --no-hook; bun vendor/ferret.bundle.js lint
-      - name: Validate no drift
-        run: bun vendor/ferret.bundle.js lint --ci
-
-  seeded-fail:
-    runs-on: ubuntu-latest
-    needs: baseline-pass
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-      - name: Seed breaking drift
-        run: chmod +x scripts/seed-breaking-drift.sh; ./scripts/seed-breaking-drift.sh
-      - name: Expect CI failure on drift
-        run: |
-          set +e
-          bun vendor/ferret.bundle.js lint --ci
-          code=$?
-          set -e
-          if [ "$code" -eq 0 ]; then
-            echo "Expected non-zero exit for breaking drift"
-            exit 1
-          fi
-
-  resolution-pass:
-    runs-on: ubuntu-latest
-    needs: seeded-fail
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
-      - name: Seed then resolve drift
-        run: chmod +x scripts/seed-breaking-drift.sh scripts/resolve-drift.sh; ./scripts/seed-breaking-drift.sh; ./scripts/resolve-drift.sh
-      - name: Validate resolved state
-        run: bun vendor/ferret.bundle.js lint --ci
+        run: bun vendor/ferret.bundle.js init --no-hook
+      - name: Assert scenario
+        run: chmod +x scripts/assert-scenario.sh; ./scripts/assert-scenario.sh
+      - name: Upload scenario artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-ci-${{ matrix.scenario.id }}
+          path: artifacts/lint-ci.json

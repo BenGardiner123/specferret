@@ -29,7 +29,7 @@ Each validation repository must:
   - one API contract
   - one table/type/event contract
   - one contract importing another contract
-- Include one intentional breaking-change scenario used by CI smoke tests
+- Include the mandatory branch-matrix scenario set below
 
 For unpublished release candidates, local dry runs may invoke the compiled CLI artifact directly from this monorepo, but final CI evidence still requires a documented install path for the exact candidate under test.
 
@@ -47,6 +47,28 @@ bun run bootstrap:validation --type bmad --out ../specferret-validation-bmad
 
 ---
 
+## Mandatory Branch Matrix (Sprint 5)
+
+Both validation repositories must expose the same branch families:
+
+- `main`
+- `scenario/breaking-required-field`
+- `scenario/breaking-type-change`
+- `scenario/nonbreaking-optional-add`
+- `scenario/transitive-impact-depth`
+- `scenario/review-resolution-flow`
+- `scenario/code-first-extract`
+- `scenario/specferret-opinionated-layout`
+
+Each scenario branch must include a small scenario manifest documenting:
+
+- expected `ferret lint --ci` exit code
+- expected drift class (`breaking`, `non-breaking`, or clean)
+- expected need for `ferret review`
+- expected downstream impact behavior (when applicable)
+
+---
+
 ## Validation Repo A — spec-kit
 
 ### Setup
@@ -60,15 +82,16 @@ bun run bootstrap:validation --type bmad --out ../specferret-validation-bmad
 
 1. Install Bun and SpecFerret
 2. Restore or generate baseline state per CI policy
-3. Run `ferret lint --ci` on no-drift commit (must pass)
-4. Run drift-seed commit job (must fail with breaking drift)
-5. Run resolution commit job (must pass)
+3. Execute matrix across all mandatory scenario branches
+4. Compare observed outcomes to scenario manifest expectations
+5. Fail workflow if any branch outcome diverges from expectation
 
 ### Required Evidence
 
-- CI links for pass/fail/pass sequence
-- `ferret lint --ci` JSON artifacts for each step
-- Commit references for drift-seed and resolution
+- Matrix workflow run URL
+- Per-branch `ferret lint --ci` JSON artifacts
+- Commit SHA tested for each branch
+- Scenario manifest revision used for validation
 
 ---
 
@@ -85,15 +108,16 @@ bun run bootstrap:validation --type bmad --out ../specferret-validation-bmad
 
 1. Install Bun and SpecFerret
 2. Restore or generate baseline state per CI policy
-3. Run `ferret lint --ci` on no-drift commit (must pass)
-4. Run drift-seed commit job (must fail with breaking drift)
-5. Run resolution commit job (must pass)
+3. Execute matrix across all mandatory scenario branches
+4. Compare observed outcomes to scenario manifest expectations
+5. Fail workflow if any branch outcome diverges from expectation
 
 ### Required Evidence
 
-- CI links for pass/fail/pass sequence
-- `ferret lint --ci` JSON artifacts for each step
-- Commit references for drift-seed and resolution
+- Matrix workflow run URL
+- Per-branch `ferret lint --ci` JSON artifacts
+- Commit SHA tested for each branch
+- Scenario manifest revision used for validation
 
 ---
 
@@ -101,10 +125,10 @@ bun run bootstrap:validation --type bmad --out ../specferret-validation-bmad
 
 GA validation is PASS only if all are true:
 
-1. Both repositories pass no-drift CI checks.
-2. Both repositories fail intentionally seeded breaking drift.
-3. Both repositories pass after contract/code resolution.
-4. Drift diagnostics identify contract ID and affected downstream contract(s).
+1. Both repositories run all mandatory scenario branches.
+2. Every scenario branch outcome matches expected manifest assertions.
+3. Breaking scenarios fail with actionable diagnostics (contract ID + downstream context).
+4. Resolution scenario proves expected post-action state.
 5. Results are reproducible on two clean CI runners.
 
 Any unmet item is a GA FAIL.
@@ -116,8 +140,9 @@ Any unmet item is a GA FAIL.
 For every GA candidate tag:
 
 1. Re-run both validation repositories against that exact tag.
-2. Publish links to evidence in release notes.
-3. Confirm gate G7 in ROADMAP is green.
+2. Execute all mandatory scenario branches in both repositories.
+3. Publish matrix evidence links in release notes.
+4. Confirm gate G7 in ROADMAP is green.
 
 ---
 

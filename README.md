@@ -517,6 +517,7 @@ PRs welcome. The codebase is intentionally small and readable.
 - [ ] **Tree-sitter extraction** — TypeScript shape extraction without annotations (Phase 5)
 - [ ] **Multi-language support** — Go, Python, OpenAPI (post Phase 5)
 - [ ] **Hosted dashboard** — team-wide contract health, analytics, SSO/RBAC
+- [ ] **Branch-matrix dogfooding (Sprint 5)** — scenario branches across spec-kit and BMAD validation repos
 
 See [spec/ROADMAP.MD](spec/ROADMAP.MD) for the full plan.
 
@@ -532,6 +533,9 @@ Released 2026-04-03:
 | BMAD validation run             | [actions/runs/23926426128](https://github.com/BenGardiner123/specferret-validation-bmad/actions/runs/23926426128)      |
 | `@specferret/core@0.1.1` on npm | [npmjs.com/package/@specferret/core](https://www.npmjs.com/package/@specferret/core)                                   |
 | `@specferret/cli@0.1.1` on npm  | [npmjs.com/package/@specferret/cli](https://www.npmjs.com/package/@specferret/cli)                                     |
+
+Sprint 5 expands this from a single smoke path to a branch matrix.
+Operational details live in [spec/GA-VALIDATION-REPOS.MD](spec/GA-VALIDATION-REPOS.MD) and [spec/GA-VALIDATION-RUNBOOK.MD](spec/GA-VALIDATION-RUNBOOK.MD).
 
 ---
 

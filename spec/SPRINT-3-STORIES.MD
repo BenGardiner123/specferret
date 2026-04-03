@@ -6,7 +6,7 @@ This sprint targets G4-G5 from ROADMAP.MD.
 
 ---
 
-## Status: In Progress
+## Status: ✓ Complete
 
 Goal: eliminate manual contract bootstrap friction and harden graph reliability.
 Gate target: G4, G5.

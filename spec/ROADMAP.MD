@@ -417,6 +417,21 @@ This is the implementation plan for G1-G7. Stories are ordered by dependency.
 | S36   | G7    | Build spec-kit validation repository and CI harness                                   | Public/paired test repo + workflow + evidence log        | Spec-kit repo green on full smoke flow and drift-block scenario         |
 | S37   | G7    | Build BMAD validation repository and CI harness                                       | Public/paired test repo + workflow + evidence log        | BMAD repo green on full smoke flow and drift-block scenario             |
 
+### Sprint 5 — Branch-Matrix Dogfooding (Coverage Expansion)
+
+Goal: formalize branch-based scenario coverage across existing validation repositories (spec-kit + BMAD) plus one opinionated SpecFerret scenario track.
+
+| Story | Gate | Scope                                                                                            | Deliverable                                                | Acceptance Test                                                                                 |
+| ----- | ---- | ------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| S38   | G7   | Define canonical scenario branch taxonomy shared by both validation repositories                 | Branch policy + required scenario manifest                 | Both repos expose the same branch families and expected outcomes                                |
+| S39   | G7   | Add deterministic assertion matrix per branch (exit code, drift class, review requirement)       | Branch assertion matrix + CI checks                        | CI fails if actual branch behavior diverges from expected branch outcomes                       |
+| S40   | G7   | Add transitive impact-depth validation scenario                                                  | Scenario fixtures + depth-aware assertions                 | Drift reports include direct and depth-2+ downstream context on transitive scenario branches    |
+| S41   | G7   | Add guided-resolution scenario branch covering accept/update/reject                              | Scenario/review-resolution-flow branch + evidence template | Branch proves block -> review action -> expected post-action state                              |
+| S42   | G7   | Add code-first extraction scenario branch for annotated TypeScript bootstrap                     | Scenario/code-first-extract branch + determinism checks    | Running `ferret extract` twice on same commit yields byte-identical contract output             |
+| S43   | G7   | Add opinionated SpecFerret scenario branches for layout, lint-first CI, and enforcement defaults | Scenario/specferret-opinionated-\* branch set              | Opinionated branches prove default workflow policy and guardrail behavior                       |
+| S44   | G7   | Update validation policy and runbook for branch-matrix operation, triage, and evidence capture   | Updated GA validation docs                                 | Maintainer can execute full branch matrix with no interpretation and collect complete artifacts |
+| S45   | G7   | Add release-readiness gate for matrix-green evidence on both repos for the same candidate tag    | Candidate release checklist update                         | Candidate is blocked if any required scenario branch is red in either validation repository     |
+
 ### Ownership and Sequencing Notes
 
 1. S25-S27 are blockers for external beta.
@@ -429,11 +444,12 @@ For S32-S33, terminal output must be structured enough that editor agents can re
 
 ### Definition of Done for GA Program
 
-1. All stories S25-S37 merged with passing tests.
+1. All stories S25-S45 merged with passing tests.
 2. GA Verification Checklist passes in CI and in one manual dry run.
 3. Changelog calls out migration notes for hook defaults and CI baseline strategy.
 4. README, CLI `--help`, and onboarding docs are mutually consistent.
 5. Validation evidence from spec-kit and BMAD repos is linked in release notes.
+6. Required Sprint 5 scenario branches are green on both validation repositories for the same candidate tag.
 
 ---
 

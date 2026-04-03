@@ -1,7 +1,7 @@
 # GA-VALIDATION-RUNBOOK.MD
 
 Step-by-step execution guide for GA validation repositories.
-Use this to run S36 and S37 without interpretation.
+Use this to run external validation scenarios with no interpretation.
 
 ---
 
@@ -12,7 +12,7 @@ This runbook verifies SpecFerret behavior in two real external workflows:
 1. spec-kit repository validation
 2. BMAD repository validation
 
-Both must complete PASS/PASS/FAIL/PASS evidence flow before GA approval.
+Both must complete mandatory branch-matrix validation before GA approval.
 
 ---
 
@@ -33,6 +33,21 @@ Use two repositories (names are suggestions):
 - `specferret-validation-bmad`
 
 These repos are throwaway validation harnesses; they are not production apps.
+
+### Required Branch Matrix
+
+Execute these branches in both repositories:
+
+- `main`
+- `scenario/breaking-required-field`
+- `scenario/breaking-type-change`
+- `scenario/nonbreaking-optional-add`
+- `scenario/transitive-impact-depth`
+- `scenario/review-resolution-flow`
+- `scenario/code-first-extract`
+- `scenario/specferret-opinionated-layout`
+
+Each branch must have expected outcomes declared in a scenario manifest.
 
 ---
 
@@ -94,43 +109,27 @@ Document the exact path used in the evidence log.
 
 ## Local Dry Run (Before CI)
 
-Run this sequence in each validation repo:
+Run the matrix in each validation repository.
 
-1. Baseline pass
+1. For each required branch, checkout the branch and run:
 
 ```bash
 ferret init --no-hook
-ferret lint
 ferret lint --ci
 ```
 
-Expected: pass
+2. Compare observed outcome with scenario manifest expectation:
+
+- exit code
+- drift class
+- review requirement
+- downstream context/depth expectation (if declared)
 
 If using a local unpublished candidate, replace `ferret` with:
 
 ```bash
 bun ../specferret/packages/cli/dist/bin/ferret.js
 ```
-
-2. Seed breaking drift
-
-```bash
-chmod +x scripts/seed-breaking-drift.sh
-./scripts/seed-breaking-drift.sh
-ferret lint --ci
-```
-
-Expected: fail (non-zero)
-
-3. Resolve drift
-
-```bash
-chmod +x scripts/resolve-drift.sh
-./scripts/resolve-drift.sh
-ferret lint --ci
-```
-
-Expected: pass
 
 ---
 
@@ -140,13 +139,9 @@ Each template includes:
 
 - `.github/workflows/specferret-validation.yml`
 
-This workflow runs three jobs:
+This workflow must execute all required scenario branches and assert branch outcomes.
 
-1. `baseline-pass`
-2. `seeded-fail`
-3. `resolution-pass`
-
-Expected overall workflow result: PASS (because seeded-fail expects non-zero drift result and treats zero as failure).
+Expected overall workflow result: PASS only when every mandatory branch matches expected outcomes.
 
 ---
 
@@ -155,11 +150,11 @@ Expected overall workflow result: PASS (because seeded-fail expects non-zero dri
 For each repository, capture:
 
 1. Workflow run URL
-2. Commit SHA tested
-3. Candidate version tested
-4. `baseline-pass` logs and `ferret lint --ci` JSON
-5. `seeded-fail` logs proving drift non-zero exit
-6. `resolution-pass` logs and final `ferret lint --ci` JSON
+2. Candidate version tested
+3. Per-branch commit SHA tested
+4. Per-branch `ferret lint --ci` JSON artifact
+5. Scenario manifest revision
+6. Outcome assertion report (expected vs observed)
 
 Store links in release notes and GA decision record.
 
@@ -169,9 +164,10 @@ Store links in release notes and GA decision record.
 
 | Check               | Expected                                 | Fail Condition              |
 | ------------------- | ---------------------------------------- | --------------------------- |
-| Baseline CI         | Pass                                     | Any non-zero exit           |
-| Seeded drift CI     | Controlled fail path                     | `ferret lint --ci` exits 0  |
-| Resolution CI       | Pass                                     | Non-zero after resolution   |
+| Branch matrix CI    | All mandatory branches executed          | Any required branch missing |
+| Branch assertions   | Expected outcome matches observed        | Outcome mismatch            |
+| Breaking scenarios  | Non-zero with actionable diagnostics     | Exit 0 or unusable output   |
+| Resolution scenario | Expected post-review state is achieved   | State mismatch              |
 | Diagnostics quality | Contract ID + downstream context visible | Generic/unactionable output |
 | Reproducibility     | Same result on two clean runners         | Inconsistent outcomes       |
 
@@ -181,17 +177,27 @@ Any fail condition blocks GA.
 
 ## Common Failure Modes and Fixes
 
-### Failure: `ferret lint --ci` passes on seeded drift
+### Failure: breaking scenario branch exits 0
 
 Cause:
 
-- Seed script did not modify required field as expected
+- Scenario branch fixture does not represent the intended breaking case
 
 Fix:
 
-- Open `contracts/auth/jwt.contract.md`
-- Confirm `required` list changed from `[id, email, token, expiresAt]` to `[id, email, token]`
-- Re-run seeded-fail job
+- Validate branch fixture and scenario manifest expectations are aligned
+- Re-run branch assertion job for that scenario
+
+### Failure: branch missing from matrix
+
+Cause:
+
+- Required branch was not created or not included in workflow matrix
+
+Fix:
+
+- Add missing branch and scenario manifest entry
+- Re-run matrix workflow
 
 ### Failure: Workflow cannot find `ferret`
 
@@ -232,9 +238,10 @@ Fix:
 ## GA Sign-off Procedure
 
 1. Run both validation repositories against the final GA candidate tag.
-2. Verify evidence checklist complete for both.
-3. Confirm G7 marked green in roadmap status review.
-4. Attach evidence links to release notes and GA announcement checklist.
+2. Verify all mandatory scenario branches are green in both repositories.
+3. Verify evidence checklist complete for both.
+4. Confirm G7 marked green in roadmap status review.
+5. Attach matrix evidence links to release notes and GA announcement checklist.
 
 No evidence, no GA.
 
