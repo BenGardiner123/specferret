@@ -41,8 +41,10 @@ interface AnnotationOverridesResult {
   diagnostics: string[];
 }
 
+type TreeSitterLanguage = Parameters<Parser["setLanguage"]>[0];
+
 const parser = new Parser();
-parser.setLanguage(tsLanguage.typescript);
+parser.setLanguage(tsLanguage.typescript as TreeSitterLanguage);
 
 function normalizeIdSegment(value: string): string {
   return value
