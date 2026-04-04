@@ -99,7 +99,7 @@ function renderContractMarkdown(
 
 export const extractCommand = new Command("extract")
   .description(
-    "Deterministically scaffold .contract.md files from @ferret-contract TypeScript annotations.",
+    "Deterministically scaffold .contract.md files from exported TypeScript declarations (annotation overrides supported).",
   )
   .option("--write", "Write generated contracts to disk (default: true)", true)
   .action(async () => {

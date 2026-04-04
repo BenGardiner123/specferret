@@ -99,6 +99,30 @@ export interface GetUsersResponse {
     assert.ok(result.stderr.includes("No interface/type declaration found"));
   });
 
+  it("generates contracts from exported declarations without annotations", () => {
+    const source = `
+export interface TeamMember {
+  id: string;
+  email?: string;
+}
+`;
+    fs.writeFileSync(path.join(tmpDir, "src", "member.ts"), source, "utf-8");
+
+    const result = runFerret(tmpDir, ["extract"]);
+
+    assert.equal(result.status, 0);
+    const outPath = path.join(
+      tmpDir,
+      "contracts",
+      "type",
+      "src-member-teammember.contract.md",
+    );
+    assert.ok(fs.existsSync(outPath));
+    const content = fs.readFileSync(outPath, "utf-8");
+    assert.ok(content.includes("id: type.src/member/teammember"));
+    assert.ok(content.includes("type: type"));
+  });
+
   it("fails with actionable diagnostic on output path collision", () => {
     const sourceA = `
 // @ferret-contract: api.GET/users api

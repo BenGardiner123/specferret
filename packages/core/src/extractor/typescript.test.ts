@@ -3,9 +3,8 @@ import { describe, it } from "bun:test";
 import { extractContractsFromTypeScript } from "./typescript.js";
 
 describe("extractContractsFromTypeScript — S28 acceptance criteria", () => {
-  it("extracts deterministic contract shapes from annotated interfaces", () => {
+  it("extracts deterministic contract shapes from exported interfaces without annotations", () => {
     const src = `
-// @ferret-contract: api.GET/users api
 export interface GetUsersResponse {
   id: string;
   email: string;
@@ -22,17 +21,48 @@ export interface GetUsersResponse {
     assert.equal(first.contracts.length, 1);
 
     const contract = first.contracts[0];
-    assert.equal(contract.id, "api.GET/users");
-    assert.equal(contract.type, "api");
+    assert.equal(contract.id, "type.src/users/getusersresponse");
+    assert.equal(contract.type, "type");
     assert.equal(contract.sourceSymbol, "GetUsersResponse");
 
     const shape = contract.shape as Record<string, unknown>;
     assert.equal(shape.type, "object");
   });
 
+  it("extracts enum and function signatures from exported declarations", () => {
+    const src = `
+export enum UserRole {
+  Admin,
+  Viewer,
+}
+
+export function getUser(id: string): UserRole {
+  return UserRole.Admin;
+}
+`;
+
+    const result = extractContractsFromTypeScript("src/roles.ts", src);
+
+    assert.equal(result.contracts.length, 2);
+    const enumContract = result.contracts.find((contract) =>
+      contract.sourceSymbol === "UserRole",
+    );
+    const functionContract = result.contracts.find((contract) =>
+      contract.sourceSymbol === "getUser",
+    );
+
+    assert.ok(enumContract);
+    assert.ok(functionContract);
+
+    const enumShape = enumContract?.shape as Record<string, unknown>;
+    assert.equal(enumShape.type, "string");
+
+    const functionShape = functionContract?.shape as Record<string, unknown>;
+    assert.equal(functionShape.type, "object");
+  });
+
   it("records diagnostics for unsupported unions", () => {
     const src = `
-// @ferret-contract: api.GET/profile api
 export interface ProfileResponse {
   email: string | null;
 }
@@ -48,15 +78,30 @@ export interface ProfileResponse {
     );
   });
 
-  it("fails extraction when annotation has no following declaration", () => {
-    const src = `// @ferret-contract: api.GET/missing api`;
+  it("applies annotation overrides for id and type when present", () => {
+    const src = `
+// @ferret-contract: api.GET/profile api
+export interface ProfileResponse {
+  email: string;
+}
+`;
+    const result = extractContractsFromTypeScript("src/missing.ts", src);
+
+    assert.equal(result.contracts.length, 1);
+    assert.equal(result.contracts[0].id, "api.GET/profile");
+    assert.equal(result.contracts[0].type, "api");
+  });
+
+  it("reports unmatched annotations", () => {
+    const src = `
+// @ferret-contract: api.GET/missing api
+interface MissingContract {
+  id: string;
+}
+`;
     const result = extractContractsFromTypeScript("src/missing.ts", src);
 
     assert.equal(result.contracts.length, 0);
-    assert.ok(
-      result.diagnostics.some((d) =>
-        d.includes("No interface/type declaration found"),
-      ),
-    );
+    assert.ok(result.diagnostics.some((d) => d.includes("did not match")));
   });
 });
