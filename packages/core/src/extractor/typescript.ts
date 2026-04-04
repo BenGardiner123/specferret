@@ -19,6 +19,9 @@ export interface ExtractedCodeContract {
 
 export interface TypeScriptExtractionResult {
   contracts: ExtractedCodeContract[];
+  /** Hard failures — annotation parse errors, unmatched annotations, tree-sitter parse failures. */
+  errors: string[];
+  /** Soft warnings — unsupported type fallbacks, partial extractions. Detection succeeded but schema is approximate. */
   diagnostics: string[];
 }
 
@@ -38,7 +41,7 @@ type Schema = Record<string, unknown>;
 
 interface AnnotationOverridesResult {
   overrides: Map<string, Annotation>;
-  diagnostics: string[];
+  errors: string[];
 }
 
 type TreeSitterLanguage = Parameters<Parser["setLanguage"]>[0];
@@ -87,8 +90,7 @@ function getIdentifierText(node: Parser.SyntaxNode | null): string | null {
   if (
     node.type === "identifier" ||
     node.type === "property_identifier" ||
-    node.type === "type_identifier" ||
-    node.type === "required_parameter"
+    node.type === "type_identifier"
   ) {
     return node.text;
   }
@@ -108,19 +110,19 @@ function extractAnnotationOverrides(
 ): AnnotationOverridesResult {
   const annotations = parseAnnotations(content);
   const overrides = new Map<string, Annotation>();
-  const diagnostics: string[] = [];
+  const errors: string[] = [];
 
   for (const annotation of annotations) {
     const declaration = extractDeclaration(content, annotation.index);
     if (declaration.error) {
-      diagnostics.push(`${filePath}: ${declaration.error}`);
+      errors.push(`${filePath}: ${declaration.error}`);
       continue;
     }
 
     overrides.set(declaration.symbol, annotation);
   }
 
-  return { overrides, diagnostics };
+  return { overrides, errors };
 }
 
 function collectExportedDeclarations(root: Parser.SyntaxNode): ExportedDeclaration[] {
@@ -317,7 +319,10 @@ function parseObjectShape(
       continue;
     }
 
-    const optional = member.text.includes("?");
+    // Check for a '?' token that is a direct (unnamed) child of the member node.
+    // This correctly distinguishes optional properties (bar?: string) from required
+    // methods that happen to have optional parameters (fn(x?: string): void).
+    const optional = member.children.some((child) => !child.isNamed && child.text === "?");
     let schema: Schema;
 
     if (member.type === "method_signature") {
@@ -397,7 +402,11 @@ function parseParametersShape(
       continue;
     }
 
-    const nameNode = parameter.childForFieldName("pattern") ?? parameter.childForFieldName("name");
+    const nameNode = parameter.childForFieldName("pattern")
+      ?? parameter.childForFieldName("name")
+      // rest_parameter exposes its identifier as a direct named child with no field name
+      ?? parameter.namedChildren.find((c) => c.type === "identifier")
+      ?? null;
     const parameterName = getIdentifierText(nameNode) ?? "arg";
     const typeNode =
       parameter.childForFieldName("type") ??
@@ -407,7 +416,14 @@ function parseParametersShape(
       ? parseTypeNode(filePath, symbol, typeNode, diagnostics)
       : { type: "object" };
 
-    if (parameter.type !== "optional_parameter") {
+    // A rest parameter is represented as required_parameter with a rest_pattern child.
+    // It can be called with zero arguments, so it must not appear in required[].
+    const isRestParameter = parameter.namedChildren.some((c) => c.type === "rest_pattern");
+    if (
+      parameter.type !== "optional_parameter" &&
+      parameter.type !== "rest_parameter" &&
+      !isRestParameter
+    ) {
       required.push(parameterName);
     }
   }
@@ -426,8 +442,21 @@ function parseEnumShape(node: Parser.SyntaxNode): Schema {
   }
 
   const values = body.namedChildren
-    .filter((child) => child.type === "property_identifier" || child.type === "identifier")
-    .map((child) => child.text);
+    .map((child) => {
+      // Bare member: Admin
+      if (child.type === "property_identifier" || child.type === "identifier") {
+        return child.text;
+      }
+      // Valued member: Admin = "admin" or Admin = 1
+      if (child.type === "enum_assignment") {
+        const nameChild = child.namedChildren.find(
+          (c) => c.type === "property_identifier" || c.type === "identifier",
+        );
+        return nameChild?.text ?? null;
+      }
+      return null;
+    })
+    .filter((v): v is string => v !== null);
 
   return {
     type: "string",
@@ -505,56 +534,19 @@ function extractDeclaration(
   start: number,
 ): {
   symbol: string;
-  objectBody: string;
   error?: string;
 } {
   const tail = content.slice(start);
-  const decl =
-    /(?:export\s+)?(interface|type)\s+([A-Za-z0-9_]+)\s*(?:=)?\s*/m.exec(tail);
+  const decl = /(?:export\s+)?(interface|type)\s+([A-Za-z0-9_]+)/m.exec(tail);
 
-  if (!decl || decl.index === undefined) {
+  if (!decl) {
     return {
       symbol: "unknown",
-      objectBody: "",
       error: "No interface/type declaration found after annotation.",
     };
   }
 
-  const symbol = decl[2];
-  const offset = start + decl.index + decl[0].length;
-  const bodyStart = content.indexOf("{", offset);
-  if (bodyStart === -1) {
-    return {
-      symbol,
-      objectBody: "",
-      error: `Declaration '${symbol}' is not an object-like type.`,
-    };
-  }
-
-  let depth = 0;
-  let end = -1;
-  for (let i = bodyStart; i < content.length; i++) {
-    const ch = content[i];
-    if (ch === "{") depth++;
-    if (ch === "}") {
-      depth--;
-      if (depth === 0) {
-        end = i;
-        break;
-      }
-    }
-  }
-
-  if (end === -1) {
-    return {
-      symbol,
-      objectBody: "",
-      error: `Unclosed object type for declaration '${symbol}'.`,
-    };
-  }
-
-  const objectBody = content.slice(bodyStart, end + 1);
-  return { symbol, objectBody };
+  return { symbol: decl[2] };
 }
 
 export function extractContractsFromTypeScript(
@@ -564,15 +556,16 @@ export function extractContractsFromTypeScript(
   const annotationResult = extractAnnotationOverrides(filePath, content);
   const annotationOverrides = annotationResult.overrides;
   const contracts: ExtractedCodeContract[] = [];
-  const diagnostics: string[] = [...annotationResult.diagnostics];
+  const errors: string[] = [...annotationResult.errors];
+  const diagnostics: string[] = [];
 
   let tree: Parser.Tree;
   try {
     tree = parser.parse(content);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown parse error.";
-    diagnostics.push(`${filePath}: Tree-sitter parse failed: ${message}`);
-    return { contracts, diagnostics };
+    errors.push(`${filePath}: Tree-sitter parse failed: ${message}`);
+    return { contracts, errors, diagnostics };
   }
 
   if (tree.rootNode.hasError) {
@@ -599,7 +592,7 @@ export function extractContractsFromTypeScript(
       continue;
     }
 
-    diagnostics.push(
+    errors.push(
       `${filePath}: Annotation for '${annotation.id}' did not match an exported declaration.`,
     );
   }
@@ -610,5 +603,5 @@ export function extractContractsFromTypeScript(
       : a.id.localeCompare(b.id),
   );
 
-  return { contracts, diagnostics };
+  return { contracts, errors, diagnostics };
 }

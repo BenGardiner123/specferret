@@ -254,8 +254,8 @@ These are not open for discussion or reconsideration.
 | Schema hashing | `node:crypto` SHA-256 | Built-in, deterministic, fast |
 | Storage — default | `bun:sqlite` | Built-in to Bun, synchronous, zero deps |
 | Storage — roadmap | Postgres via `DBStore` interface | Sprint 2 |
-| Annotation detection | Regex | Sprint 3. `@ferret-contract:` is a predictable pattern. No parser needed. |
-| Code shape extraction | Tree-sitter TypeScript | Sprint 3. The one job requiring a real AST parser. |
+| Annotation detection | Regex | Sprint 1. `@ferret-contract:` is a predictable pattern. No parser needed. |
+| Code shape extraction | Tree-sitter TypeScript | Sprint 1. Pulled forward from Sprint 3 — structural extraction without annotations is the primary use-case. |
 | Test runner | `bun test` | Native to runtime, fast, no config |
 
 **Do not use WASM. Do not add LLMs to the default path. Ever.**
@@ -278,8 +278,6 @@ Sprint 2 (roadmap)
   ferret upgrade command
 
 Sprint 3 (roadmap)
-  Regex annotation detection — @ferret-contract
-  Tree-sitter TypeScript — structural shape extraction
   Code node scanning — upward BFS drift detection
   ferret place, ferret status, ferret graph commands
   Full import integrity enforcement

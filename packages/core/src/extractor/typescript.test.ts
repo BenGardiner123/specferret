@@ -102,6 +102,86 @@ interface MissingContract {
     const result = extractContractsFromTypeScript("src/missing.ts", src);
 
     assert.equal(result.contracts.length, 0);
-    assert.ok(result.diagnostics.some((d) => d.includes("did not match")));
+    assert.ok(result.errors.some((d) => d.includes("did not match")));
+  });
+
+  it("extracts type alias with primitive value", () => {
+    const src = `
+export type UserId = string;
+`;
+    const result = extractContractsFromTypeScript("src/ids.ts", src);
+
+    assert.equal(result.contracts.length, 1);
+    const contract = result.contracts[0];
+    assert.equal(contract.sourceSymbol, "UserId");
+    assert.deepEqual(contract.shape, { type: "string" });
+  });
+
+  it("extracts enum members with string initialisers", () => {
+    const src = `
+export enum Role {
+  Admin = "admin",
+  Viewer = "viewer",
+}
+`;
+    const result = extractContractsFromTypeScript("src/roles.ts", src);
+
+    assert.equal(result.contracts.length, 1);
+    const shape = result.contracts[0].shape as Record<string, unknown>;
+    assert.equal(shape.type, "string");
+    assert.deepEqual(shape.enum, ["Admin", "Viewer"]);
+  });
+
+  it("does not mark required methods with optional parameters as optional", () => {
+    const src = `
+export interface Service {
+  bar: string;
+  baz?: string;
+  fn(x?: string): void;
+}
+`;
+    const result = extractContractsFromTypeScript("src/service.ts", src);
+    assert.equal(result.diagnostics.length, 0);
+
+    const shape = result.contracts[0].shape as {
+      required: string[];
+      properties: Record<string, unknown>;
+    };
+    // 'bar' and 'fn' are required; 'baz' is optional
+    assert.ok(shape.required.includes("bar"));
+    assert.ok(shape.required.includes("fn"));
+    assert.ok(!shape.required.includes("baz"));
+  });
+
+  it("does not mark rest parameters as required", () => {
+    const src = `
+export function log(message: string, ...args: string[]): void {}
+`;
+    const result = extractContractsFromTypeScript("src/log.ts", src);
+    assert.equal(result.contracts.length, 1);
+
+    const shape = result.contracts[0].shape as {
+      properties: { params: { required: string[] } };
+    };
+    const paramsRequired = shape.properties.params.required;
+    assert.ok(paramsRequired.includes("message"), "message should be required");
+    assert.ok(!paramsRequired.includes("args"), "rest param args should not be required");
+  });
+
+  it("extracts function with typed parameters", () => {
+    const src = `
+export function getUser(id: string, active: boolean): void {}
+`;
+    const result = extractContractsFromTypeScript("src/user.ts", src);
+    assert.equal(result.contracts.length, 1);
+
+    const shape = result.contracts[0].shape as {
+      properties: {
+        params: { properties: Record<string, unknown>; required: string[] };
+      };
+    };
+    assert.deepEqual(shape.properties.params.properties["id"], { type: "string" });
+    assert.deepEqual(shape.properties.params.properties["active"], { type: "boolean" });
+    assert.deepEqual(shape.properties.params.required, ["id", "active"]);
   });
 });
