@@ -44,11 +44,11 @@ export function getUser(id: string): UserRole {
     const result = extractContractsFromTypeScript("src/roles.ts", src);
 
     assert.equal(result.contracts.length, 2);
-    const enumContract = result.contracts.find((contract) =>
-      contract.sourceSymbol === "UserRole",
+    const enumContract = result.contracts.find(
+      (contract) => contract.sourceSymbol === "UserRole",
     );
-    const functionContract = result.contracts.find((contract) =>
-      contract.sourceSymbol === "getUser",
+    const functionContract = result.contracts.find(
+      (contract) => contract.sourceSymbol === "getUser",
     );
 
     assert.ok(enumContract);
@@ -165,7 +165,10 @@ export function log(message: string, ...args: string[]): void {}
     };
     const paramsRequired = shape.properties.params.required;
     assert.ok(paramsRequired.includes("message"), "message should be required");
-    assert.ok(!paramsRequired.includes("args"), "rest param args should not be required");
+    assert.ok(
+      !paramsRequired.includes("args"),
+      "rest param args should not be required",
+    );
   });
 
   it("extracts function with typed parameters", () => {
@@ -180,8 +183,12 @@ export function getUser(id: string, active: boolean): void {}
         params: { properties: Record<string, unknown>; required: string[] };
       };
     };
-    assert.deepEqual(shape.properties.params.properties["id"], { type: "string" });
-    assert.deepEqual(shape.properties.params.properties["active"], { type: "boolean" });
+    assert.deepEqual(shape.properties.params.properties["id"], {
+      type: "string",
+    });
+    assert.deepEqual(shape.properties.params.properties["active"], {
+      type: "boolean",
+    });
     assert.deepEqual(shape.properties.params.required, ["id", "active"]);
   });
 });

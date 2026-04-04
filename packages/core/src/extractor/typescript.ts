@@ -125,7 +125,9 @@ function extractAnnotationOverrides(
   return { overrides, errors };
 }
 
-function collectExportedDeclarations(root: Parser.SyntaxNode): ExportedDeclaration[] {
+function collectExportedDeclarations(
+  root: Parser.SyntaxNode,
+): ExportedDeclaration[] {
   const declarations: ExportedDeclaration[] = [];
 
   for (const node of root.namedChildren) {
@@ -310,7 +312,9 @@ function parseObjectShape(
     const nameNode =
       member.childForFieldName("name") ??
       findChildByType(member, ["property_identifier", "identifier", "string"]);
-    const propertyName = getIdentifierText(nameNode) ?? nameNode?.text?.replace(/^['"]|['"]$/g, "");
+    const propertyName =
+      getIdentifierText(nameNode) ??
+      nameNode?.text?.replace(/^['"]|['"]$/g, "");
 
     if (!propertyName) {
       diagnostics.push(
@@ -322,7 +326,9 @@ function parseObjectShape(
     // Check for a '?' token that is a direct (unnamed) child of the member node.
     // This correctly distinguishes optional properties (bar?: string) from required
     // methods that happen to have optional parameters (fn(x?: string): void).
-    const optional = member.children.some((child) => !child.isNamed && child.text === "?");
+    const optional = member.children.some(
+      (child) => !child.isNamed && child.text === "?",
+    );
     let schema: Schema;
 
     if (member.type === "method_signature") {
@@ -331,7 +337,12 @@ function parseObjectShape(
       schema = {
         type: "object",
         properties: {
-          params: parseParametersShape(filePath, symbol, parameters, diagnostics),
+          params: parseParametersShape(
+            filePath,
+            symbol,
+            parameters,
+            diagnostics,
+          ),
           returns: returnType
             ? parseTypeNode(filePath, symbol, returnType, diagnostics)
             : { type: "object" },
@@ -393,24 +404,31 @@ function parseParametersShape(
 
   for (const parameter of parametersNode.namedChildren) {
     if (
-      ![
-        "required_parameter",
-        "optional_parameter",
-        "rest_parameter",
-      ].includes(parameter.type)
+      !["required_parameter", "optional_parameter", "rest_parameter"].includes(
+        parameter.type,
+      )
     ) {
       continue;
     }
 
-    const nameNode = parameter.childForFieldName("pattern")
-      ?? parameter.childForFieldName("name")
+    const nameNode =
+      parameter.childForFieldName("pattern") ??
+      parameter.childForFieldName("name") ??
       // rest_parameter exposes its identifier as a direct named child with no field name
-      ?? parameter.namedChildren.find((c) => c.type === "identifier")
-      ?? null;
+      parameter.namedChildren.find((c) => c.type === "identifier") ??
+      null;
     const parameterName = getIdentifierText(nameNode) ?? "arg";
     const typeNode =
       parameter.childForFieldName("type") ??
-      findChildByType(parameter, ["type_annotation", "predefined_type", "type_identifier", "array_type", "union_type", "intersection_type", "object_type"]);
+      findChildByType(parameter, [
+        "type_annotation",
+        "predefined_type",
+        "type_identifier",
+        "array_type",
+        "union_type",
+        "intersection_type",
+        "object_type",
+      ]);
 
     properties[parameterName] = typeNode
       ? parseTypeNode(filePath, symbol, typeNode, diagnostics)
@@ -418,7 +436,9 @@ function parseParametersShape(
 
     // A rest parameter is represented as required_parameter with a rest_pattern child.
     // It can be called with zero arguments, so it must not appear in required[].
-    const isRestParameter = parameter.namedChildren.some((c) => c.type === "rest_pattern");
+    const isRestParameter = parameter.namedChildren.some(
+      (c) => c.type === "rest_pattern",
+    );
     if (
       parameter.type !== "optional_parameter" &&
       parameter.type !== "rest_parameter" &&
@@ -436,7 +456,8 @@ function parseParametersShape(
 }
 
 function parseEnumShape(node: Parser.SyntaxNode): Schema {
-  const body = node.childForFieldName("body") ?? findChildByType(node, ["enum_body"]);
+  const body =
+    node.childForFieldName("body") ?? findChildByType(node, ["enum_body"]);
   if (!body) {
     return { type: "string", enum: [] };
   }
@@ -470,7 +491,9 @@ function parseDeclarationShape(
   diagnostics: string[],
 ): Schema {
   if (declaration.kind === "interface") {
-    const body = declaration.node.childForFieldName("body") ?? findChildByType(declaration.node, ["interface_body"]);
+    const body =
+      declaration.node.childForFieldName("body") ??
+      findChildByType(declaration.node, ["interface_body"]);
     if (!body) {
       diagnostics.push(
         `${filePath} (${declaration.symbol}): Interface body was not found. Falling back to object.`,
@@ -482,7 +505,9 @@ function parseDeclarationShape(
   }
 
   if (declaration.kind === "type") {
-    const valueNode = declaration.node.childForFieldName("value") ?? declaration.node.namedChildren.at(-1);
+    const valueNode =
+      declaration.node.childForFieldName("value") ??
+      declaration.node.namedChildren.at(-1);
     if (!valueNode) {
       diagnostics.push(
         `${filePath} (${declaration.symbol}): Type alias value was not found. Falling back to object.`,
@@ -503,7 +528,12 @@ function parseDeclarationShape(
   return {
     type: "object",
     properties: {
-      params: parseParametersShape(filePath, declaration.symbol, parameters, diagnostics),
+      params: parseParametersShape(
+        filePath,
+        declaration.symbol,
+        parameters,
+        diagnostics,
+      ),
       returns: returnType
         ? parseTypeNode(filePath, declaration.symbol, returnType, diagnostics)
         : { type: "object" },
@@ -563,13 +593,16 @@ export function extractContractsFromTypeScript(
   try {
     tree = parser.parse(content);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown parse error.";
+    const message =
+      error instanceof Error ? error.message : "Unknown parse error.";
     errors.push(`${filePath}: Tree-sitter parse failed: ${message}`);
     return { contracts, errors, diagnostics };
   }
 
   if (tree.rootNode.hasError) {
-    diagnostics.push(`${filePath}: Tree-sitter detected syntax errors; extraction may be partial.`);
+    diagnostics.push(
+      `${filePath}: Tree-sitter detected syntax errors; extraction may be partial.`,
+    );
   }
 
   const declarations = collectExportedDeclarations(tree.rootNode);
