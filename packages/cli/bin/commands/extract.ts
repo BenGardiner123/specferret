@@ -99,7 +99,7 @@ function renderContractMarkdown(
 
 export const extractCommand = new Command("extract")
   .description(
-    "Deterministically scaffold .contract.md files from @ferret-contract TypeScript annotations.",
+    "Deterministically scaffold .contract.md files from exported TypeScript declarations (annotation overrides supported).",
   )
   .option("--write", "Write generated contracts to disk (default: true)", true)
   .action(async () => {
@@ -127,9 +127,14 @@ export const extractCommand = new Command("extract")
       const absFile = path.join(root, relFile);
       const source = fs.readFileSync(absFile, "utf-8");
       const result = extractContractsFromTypeScript(relFile, source);
+      // Hard errors (broken annotations, parse failures) count as failures.
+      for (const e of result.errors) {
+        diagnostics.push(e);
+        failed++;
+      }
+      // Soft diagnostics (union type fallbacks etc.) are collected as warnings only.
       for (const d of result.diagnostics) {
         diagnostics.push(d);
-        failed++;
       }
 
       for (const contract of result.contracts) {

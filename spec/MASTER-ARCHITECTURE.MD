@@ -205,14 +205,14 @@ flowchart TD
 
 Strict separation. No layer reaches into another layer's domain. Ever.
 
-| Layer | Responsibility | Does NOT do |
-|---|---|---|
-| **Store** | Insert, update, query, delete. Parameterised SQL only. | Business logic, graph traversal, parsing |
-| **Extractor** | Turn a file into an `ExtractionResult`. | Talk to store, know about graph |
-| **Validator** | Validate JSON Schema subset. Classify breaking vs non-breaking. | Parse files, I/O, side effects |
-| **Reconciler** | BFS traversal, flag dirty nodes, return report. | Parse files, format output |
-| **Context** | Write `.ferret/context.json` after every scan. | Anything else |
-| **CLI** | Read config, call core, print result, exit. | Business logic, parsing, traversal |
+| Layer          | Responsibility                                                  | Does NOT do                              |
+| -------------- | --------------------------------------------------------------- | ---------------------------------------- |
+| **Store**      | Insert, update, query, delete. Parameterised SQL only.          | Business logic, graph traversal, parsing |
+| **Extractor**  | Turn a file into an `ExtractionResult`.                         | Talk to store, know about graph          |
+| **Validator**  | Validate JSON Schema subset. Classify breaking vs non-breaking. | Parse files, I/O, side effects           |
+| **Reconciler** | BFS traversal, flag dirty nodes, return report.                 | Parse files, format output               |
+| **Context**    | Write `.ferret/context.json` after every scan.                  | Anything else                            |
+| **CLI**        | Read config, call core, print result, exit.                     | Business logic, parsing, traversal       |
 
 **CLI command file maximum: 50 lines. If a command file exceeds this, logic is in the wrong layer.**
 
@@ -226,17 +226,17 @@ returns this exact shape. The rest of the system cannot tell them apart.
 ```typescript
 interface ExtractionResult {
   filePath: string;
-  fileType: 'spec' | 'code';
+  fileType: "spec" | "code";
   contracts: Array<{
-    id: string;          // e.g. "api.GET/search"
-    type: string;        // e.g. "api"
-    shape: object;       // JSON Schema object — SpecFerret supported subset
-    shape_hash: string;  // SHA-256 of key-sorted schema
-    imports: string[];   // e.g. ["auth.jwt", "tables.document"]
+    id: string; // e.g. "api.GET/search"
+    type: string; // e.g. "api"
+    shape: object; // JSON Schema object — SpecFerret supported subset
+    shape_hash: string; // SHA-256 of key-sorted schema
+    imports: string[]; // e.g. ["auth.jwt", "tables.document"]
   }>;
-  extractedBy: 'gray-matter' | 'tree-sitter';
-  extractedAt: number;   // unix ms
-  warning?: 'no-frontmatter';
+  extractedBy: "gray-matter" | "tree-sitter";
+  extractedAt: number; // unix ms
+  warning?: "no-frontmatter";
 }
 ```
 
@@ -246,17 +246,17 @@ interface ExtractionResult {
 
 These are not open for discussion or reconsideration.
 
-| Job | Tool | Reason |
-|---|---|---|
-| Runtime | Bun 1.0+ | Performance, native SQLite, TypeScript native, Claude Code alignment |
-| Spec frontmatter parsing | `gray-matter` | Synchronous, proven, zero deps |
-| JSON Schema validation | `ajv` + `ajv-formats` | 50M weekly downloads. Proven. |
-| Schema hashing | `node:crypto` SHA-256 | Built-in, deterministic, fast |
-| Storage — default | `bun:sqlite` | Built-in to Bun, synchronous, zero deps |
-| Storage — roadmap | Postgres via `DBStore` interface | Sprint 2 |
-| Annotation detection | Regex | Sprint 3. `@ferret-contract:` is a predictable pattern. No parser needed. |
-| Code shape extraction | Tree-sitter TypeScript | Sprint 3. The one job requiring a real AST parser. |
-| Test runner | `bun test` | Native to runtime, fast, no config |
+| Job                      | Tool                             | Reason                                                                                                      |
+| ------------------------ | -------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Runtime                  | Bun 1.0+                         | Performance, native SQLite, TypeScript native, Claude Code alignment                                        |
+| Spec frontmatter parsing | `gray-matter`                    | Synchronous, proven, zero deps                                                                              |
+| JSON Schema validation   | `ajv` + `ajv-formats`            | 50M weekly downloads. Proven.                                                                               |
+| Schema hashing           | `node:crypto` SHA-256            | Built-in, deterministic, fast                                                                               |
+| Storage — default        | `bun:sqlite`                     | Built-in to Bun, synchronous, zero deps                                                                     |
+| Storage — roadmap        | Postgres via `DBStore` interface | Sprint 2                                                                                                    |
+| Annotation detection     | Regex                            | Sprint 1. `@ferret-contract:` is a predictable pattern. No parser needed.                                   |
+| Code shape extraction    | Tree-sitter TypeScript           | Sprint 1. Pulled forward from Sprint 3 — structural extraction without annotations is the primary use-case. |
+| Test runner              | `bun test`                       | Native to runtime, fast, no config                                                                          |
 
 **Do not use WASM. Do not add LLMs to the default path. Ever.**
 
@@ -278,8 +278,6 @@ Sprint 2 (roadmap)
   ferret upgrade command
 
 Sprint 3 (roadmap)
-  Regex annotation detection — @ferret-contract
-  Tree-sitter TypeScript — structural shape extraction
   Code node scanning — upward BFS drift detection
   ferret place, ferret status, ferret graph commands
   Full import integrity enforcement
@@ -297,4 +295,4 @@ V3 (Sebastian's vision)
 
 ---
 
-*© Laser Unicorn — MIT License*
+_© Laser Unicorn — MIT License_

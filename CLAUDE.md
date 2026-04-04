@@ -63,13 +63,13 @@ CLI         — reads config, calls core, prints result, exits.
 
 These are not open for discussion or reconsideration.
 
-| Job                         | Tool                                      |
-| --------------------------- | ----------------------------------------- |
-| Spec frontmatter parsing    | `gray-matter` — synchronous, zero deps    |
-| JSON Schema validation      | `ajv` + `ajv-formats`                     |
-| Annotation detection        | Regex only                                |
-| TypeScript shape extraction | Tree-sitter TypeScript — Phase 5 only     |
-| Storage                     | SQLite default (silent), Postgres roadmap |
+| Job                         | Tool                                        |
+| --------------------------- | ------------------------------------------- |
+| Spec frontmatter parsing    | `gray-matter` — synchronous, zero deps      |
+| JSON Schema validation      | `ajv` + `ajv-formats`                       |
+| Annotation detection        | Regex only                                  |
+| TypeScript shape extraction | Tree-sitter TypeScript — Sprint 1 (shipped) |
+| Storage                     | SQLite default (silent), Postgres roadmap   |
 
 **Do not reach for WASM before Phase 5. If you find yourself doing this, stop.**
 
